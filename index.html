@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>📚 课时追踪器</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="课时追踪器">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAGJ0lEQVR4nO3dTU4cVxSG4WpkMY0yAGWUjWQasQO2YHZhBLuALXgHVqbZSEaRGUSZeuJMUrgp6uf+nKp7znffR/LEsaCpfvl8u6kkp8GJj5++fm/9GFDn+fH61PoxNHsABKyvReCHfkIi7tdRce/+SYgYU3vGvdsHJmRs2SNs8w9IyMhlGfaF1QcaBmJGGctuTL4zCBlWate6eqGJGZZqe6oKmpixh5quiuadkHGU3CNI9kITM46U21tW0MSMFnK6Sw6amNFSan+m70MDrSUFzTrDg5QON4MmZniy1eNq0MQMj9a65AwNKYtBs87wbKnP2aCJGRHMdcqRA1LeBc06I5Jpryw0pLwJmnVGROfdstCQQtCQ8ho0xw1ENvbLQkMKQUPKaRg4bkAHCw0pBA0pBA0pF5yfoYSFhhSChhSChhSChhSChhSChhSChhSChhSChhSChhSChhSCNvb0cPXu9/75+6/XXyl/HuUI2lBpnERth6AhhaCN1K4sK22DoCGFoA1YrSsrXY+gIYWgK1mvKitdh6AhhaAr7LWmrHQ5gi60d3REXYagjd3dv7z7vZ9/+fX1V8qfRzmCLnDUerLS+QjaUOnastJ2CDrT0avJSuchaCO1K8tK2yDoDEtraRXj0sdhpdMRdKLWUbX+/FEQdCXrowJHjzoEncDLOnp5HJ4RdIW91pSVLkfQG7ytorfH4w1BF9p7RVnpMgS9Yu+36bbwNl4+goYUgl7Qep23Ph8rPY+gZ0SJJcrjPBJBZ2j1Qo0XiOkIesLLUSP187PSbxE0pBD0Ga/rPGKltxE0pBD0/7yv84iVXkfQQ5yYR0S9jKAhpfugo63ziJWe133Q0NJ10FHXecRKv9d10HNyY769uTT9/LkfL8o331E+tH4AreSumHW4JZ/r85dvyR/j6eGqy9i7DXrO3f3Larg5QZVa+hy3N5eLj+3u/qXrY8a508dPX7+3fhBHe3q4Gv7489/Ff35EuFbWvgF//+2n7lZaPuitJ3yk8MSfr7TKN2wumSNH6lGhl7+al75Z144uCqGHW+iaM270t+lSlH6NrV87WAm50JYXWCnmYSh/gbj2YjSScO9Dl8bcy1FjSenXH2mdhyFg0JbU1nmk+nWl6CLo3td51MN16CLoOeorpv71LZEPem6VLJ/s1vdyrJn7OtVXOuS7HKksn7xo93KsUb7PQzroOd7fjy25l2PtcfV2n4ds0FtPYutwc1mHrrrSskGPpvc0nD/5HsPNlRL69Bqc/1hcTbgffS/hrrNtSncZLgm30ClHhZ7OjLmm6zx+o6vctBRuoW9vLjfPhlOs8w+512frensT7n3o3Jixbe26RYp5GAIGnYt1fkv9esgEzTrXUbl+MkHPUV+jUsrXRSLoli8EPd/LsUb1Po9wb9u1onQvh7Jwb9tNWa+z1x+J7/W41N7m7HahvYa7xPpeDlWhFzplXaKFayXn61Za6bBBT58E9XsUrKT+h3eGIWbU4YLudXH3pnJdQ56h525/jLgmnnz+8m326LH2N59H4d6HjrQWCqJd73BBK72A8Ubhhy3hgp4iZlvRr2eooKOthYpI1z1M0Bw1jhP56BEmaCBFiKBZ5+NFXekQQU8R8zEiXmf3QUdYhZ54fz7cBz0VcTUii3a9XQftfQ165fl5cR30VLS1UBHpursN2vMKwO/z4zboqUgroSjK9Q8RdJSLqS7C8xAiaCCV+6AjrEJPvD8f7oMGcrgO2vsa9Mrz8xLuX5IF1rheaCAXQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUPKxfPj9an1gwCssNCQQtCQQtCQcjEMw8A5GgqeH69PLDSkEDSkvAbNsQORjf2y0JBC0JDyJmiOHYjovFsWGlLeBc1KI5Jpryw0pMwGzUojgrlOFxeaqOHZUp8cOSBlNWhWGh6tdbm50EQNT7Z6TDpyEDU8SOmQMzSkJAfNSqOl1P6yFpqo0UJOd9lHDqLGkXJ7q4qT/z8L9lI6nFUvCllr7KGmq+p3OYgalmp7Mo2RIwhKWQ2j6fvQrDVKWHazW4CsNbbsMYC7LyphY2rPv8kPPSIQd7+OOo42O/MSt74Wr6n+AwTxh8yeVQ45AAAAAElFTkSuQmCC">
+<style>
+:root {
+  --bg:#F5F7FB; --card:#FFFFFF; --text:#2D3748; --text-muted:#718096;
+  --border:#E2E8F0; --radius:14px; --shadow:0 2px 16px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px 20px 16px;text-align:center;}
+header h1{font-size:22px;font-weight:700;letter-spacing:1px;}
+header p{font-size:13px;opacity:0.85;margin-top:4px;}
+.container{max-width:820px;margin:0 auto;padding:18px 14px 40px;}
+
+/* 日历 */
+.calendar-box{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:20px;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-title{font-size:15px;font-weight:700;}
+.cal-nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.cal-nav button{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:14px;color:var(--text-muted);transition:all 0.2s;}
+.cal-nav button:hover{background:var(--bg);color:var(--text);}
+.cal-today-btn{width:auto!important;padding:0 12px;border-radius:14px;font-size:12px;}
+.cal-nav-block{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.cal-day-btn{width:auto!important;padding:0 12px;border-radius:14px;font-size:12px;}
+.cal-cell.selected{outline:2px solid #28C76F;outline-offset:-2px;font-weight:700;background:#E8F8EF;}
+.cal-cell.today.selected{outline:2px solid #28C76F;}
+.cal-cell{cursor:pointer;}
+.cal-sel-info{margin-left:auto;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{text-align:center;font-size:11px;color:var(--text-muted);font-weight:600;padding:4px 0;}
+.cal-dow.weekend{color:#FF5B5B;}
+.cal-cell{border-radius:8px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;font-size:12px;position:relative;height:58px;transition:background 0.15s;}
+.cal-cell.empty{background:transparent;}
+.cal-cell.has-class{background:#F0F4FF;}
+.cal-cell.today{outline:2px solid #667eea;outline-offset:-2px;font-weight:700;}
+.cal-cell .cal-day{font-size:13px;line-height:1.2;}
+.cal-cell.weekend .cal-day{color:#FF5B5B;}
+.cal-cell .cal-dots{display:flex;gap:2px;margin-top:2px;flex-wrap:wrap;justify-content:center;}
+.cal-dot{width:5px;height:5px;border-radius:50%;}
+.cal-cell .cal-labels{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:1px;font-size:8.5px;line-height:1.12;max-height:22px;overflow:hidden;}
+.cal-cell .cal-status{position:absolute;top:1px;right:2px;font-size:9px;}
+
+/* 总览 */
+.overview{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.ov-card{flex:1;min-width:200px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-top:4px solid transparent;cursor:pointer;position:relative;}
+.ov-title{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
+.ov-main{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;}
+.ov-remain{font-size:26px;font-weight:800;}
+.ov-remain span{font-size:13px;font-weight:400;color:var(--text-muted);}
+.ov-meta{font-size:12px;color:var(--text-muted);text-align:right;}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.ov-stats{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;}
+.ov-stat{font-size:11px;color:var(--text-muted);}
+.ov-stat b{color:var(--text);}
+.ov-pkg-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);gap:6px;}
+.ov-pkg-info{font-size:11px;color:var(--text-muted);}
+.ov-pkg-btn{padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg);font-size:11px;cursor:pointer;color:var(--text-muted);transition:all 0.2s;white-space:nowrap;}
+.ov-pkg-btn:hover{background:#EDEFF5;color:var(--text);border-color:#aaa;}
+.ov-edit-btn{position:absolute;top:10px;right:10px;font-size:13px;background:none;border:none;cursor:pointer;opacity:0.5;}
+.ov-edit-btn:hover{opacity:1;}
+
+/* 图例 */
+.legend{display:flex;gap:14px;flex-wrap:wrap;background:var(--card);border-radius:10px;padding:12px 16px;margin-bottom:16px;box-shadow:var(--shadow);font-size:12px;}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.tab-btn{padding:8px 18px;border-radius:20px;border:2px solid var(--border);background:var(--card);color:var(--text-muted);font-size:14px;cursor:pointer;font-weight:600;transition:all 0.2s;}
+.tab-btn:hover:not(.active){border-color:#aaa;color:var(--text);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* 课程页头部 */
+.tab-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:var(--shadow);flex-wrap:wrap;}
+.tab-head-info{font-size:12px;color:var(--text-muted);}
+.tab-head-info b{color:var(--text);font-size:14px;}
+.empty-hint{text-align:center;color:var(--text-muted);font-size:13px;padding:30px 10px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);}
+
+/* 工具栏 */
+.toolbar{display:flex;gap:8px;justify-content:flex-end;margin-bottom:14px;flex-wrap:wrap;}
+.toolbar-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:12px;cursor:pointer;color:var(--text-muted);transition:all 0.2s;}
+.toolbar-btn:hover{background:var(--bg);color:var(--text);border-color:#aaa;}
+.toolbar-btn.danger{color:#CC0000;border-color:#FFECEC;}
+.toolbar-btn.danger:hover{background:#FFECEC;}
+#lock-btn.locked{background:#FF5B5B;color:white;border-color:#FF5B5B;}
+
+/* 课程列表 */
+.lesson-list{display:flex;flex-direction:column;gap:6px;}
+.lesson-item{background:var(--card);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 6px rgba(0,0,0,0.05);transition:box-shadow 0.2s;flex-wrap:wrap;}
+.lesson-item:hover{box-shadow:0 3px 12px rgba(0,0,0,0.10);}
+.lesson-item.pair-parent{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:-6px;}
+.lesson-item.extra-row{border-left:3px solid #1EAAE7;background:#F8FBFF;border-top-left-radius:0;border-top-right-radius:0;margin-top:-2px;}
+.lesson-item.extra-row .lesson-num{background:#1EAAE7;}
+.lesson-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;}
+.lesson-info{flex:1;min-width:0;}
+.lesson-date{font-size:14px;font-weight:600;}
+.lesson-time{font-size:12px;color:var(--text-muted);margin-top:1px;}
+.lesson-tag{font-size:11px;padding:2px 6px;border-radius:8px;margin-left:6px;font-weight:600;vertical-align:middle;}
+.tag-parent{background:#FFF3E0;color:#E65100;}
+.tag-link-absent{background:#FFECEC;color:#CC0000;}
+.tag-link-reschedule{background:#E3F4FD;color:#1078A8;}
+.tag-manual{background:#EDEFF5;color:#5A67D8;}
+.status-btn{padding:6px 12px;border-radius:20px;border:none;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+.status-normal{background:#E6F7EE;color:#1C8F4F;}
+.status-absent{background:#FFECEC;color:#CC0000;}
+.status-makeup{background:#E3F4FD;color:#1078A8;}
+.status-parent{background:#FFF3E0;color:#E65100;}
+.status-holiday{background:#F3EEFF;color:#7C3AED;}
+.status-pending{background:#F0F0F0;color:#999;}
+.status-unrecorded{background:#FFF8E6;color:#B7791F;cursor:pointer;}
+.status-btn:hover:not([data-status="pending"]){filter:brightness(0.92);}
+.note-input{border:1px dashed var(--border);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--text-muted);width:90px;outline:none;background:transparent;font-family:inherit;}
+.note-input:focus{border-color:#aaa;background:#fafafa;}
+.note-input::placeholder{color:#ccc;}
+.edit-btn{font-size:12px;color:var(--text-muted);cursor:pointer;background:none;border:none;text-decoration:underline;flex-shrink:0;}
+.edit-btn:hover{color:var(--text);}
+.del-btn{width:24px;height:24px;border-radius:50%;border:none;background:transparent;color:#ccc;font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:all 0.2s;}
+.del-btn:hover{color:#FF5B5B;background:#FFECEC;}
+
+/* 月份折叠 */
+.month-header{font-size:13px;font-weight:700;color:var(--text-muted);padding:10px 4px 6px;letter-spacing:1px;border-bottom:1px solid var(--border);margin-bottom:8px;margin-top:4px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:color 0.2s;}
+.month-header:hover{color:var(--text);}
+.month-arrow{font-size:11px;transition:transform 0.25s;display:inline-block;}
+.month-arrow.collapsed{transform:rotate(-90deg);}
+.month-group.collapsed > :not(.month-header){display:none;}
+.month-summary{font-size:11px;font-weight:400;color:var(--text-muted);margin-left:auto;}
+
+/* 课时包分组（月内再按包展示） */
+.pkg-block{margin:2px 0 12px;padding-left:9px;border-left:3px solid var(--border);}
+.pkg-subhead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--text);padding:5px 0 7px;margin-top:2px;cursor:pointer;user-select:none;}
+.pkg-subname{color:#667eea;}
+.pkg-subinfo{font-weight:400;font-size:11px;color:var(--text-muted);}
+.pkg-subcount{margin-left:auto;font-weight:400;font-size:11px;color:var(--text-muted);background:var(--bg);padding:1px 8px;border-radius:10px;}
+.pkg-empty{font-size:11px;color:var(--text-muted);padding:4px 0 6px;font-style:italic;}
+.pkg-subarrow{display:inline-block;font-size:10px;margin-right:1px;color:var(--text-muted);transition:transform .2s;}
+.pkg-subarrow.collapsed{transform:rotate(-90deg);}
+.pkg-block.collapsed > .lesson-item,
+.pkg-block.collapsed > .pkg-empty{display:none;}
+.pkg-tag-done{display:inline-block;font-size:10px;font-weight:600;color:#28C76F;background:#E8F8EF;padding:0 6px;border-radius:8px;margin-left:2px;}
+.pkg-block.container{border-left-style:dashed;border-left-color:#28C76F;}
+.pkg-tag-shared{display:inline-block;font-size:10px;font-weight:600;color:#28C76F;background:#E8F8EF;padding:0 6px;border-radius:8px;vertical-align:middle;}
+.pkg-item.container{border-left:3px dashed #28C76F;padding-left:8px;}
+.modal-box select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;background:var(--card);color:var(--text);}
+.time-custom{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin:8px 0 12px;outline:none;font-family:inherit;box-sizing:border-box;background:var(--card);color:var(--text);}
+.time-range{display:inline-flex;align-items:center;gap:8px;width:100%;margin-bottom:12px;}
+.time-range input[type=time]{width:auto;flex:1;min-width:0;margin-bottom:0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;font-family:inherit;background:var(--card);color:var(--text);}
+.time-range input[type=time]:focus{border-color:#667eea;}
+.time-sep{color:var(--text-muted);flex-shrink:0;font-size:14px;}
+
+/* 弹窗 */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:100;justify-content:center;align-items:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--card);border-radius:var(--radius);padding:24px;width:360px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-height:88vh;overflow-y:auto;}
+.modal-box h3{font-size:16px;margin-bottom:16px;}
+.modal-box label{font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px;}
+.modal-box input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;}
+.modal-box input:focus{border-color:#667eea;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+.modal-btn{padding:8px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
+.modal-btn.primary{background:#667eea;color:white;}
+.modal-btn.cancel{background:var(--border);color:var(--text-muted);}
+.wd-picker{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.wd-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;color:var(--text-muted);}
+.wd-btn.on{background:#667eea;color:#fff;border-color:#667eea;}
+.emoji-picker{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.emoji-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:18px;cursor:pointer;}
+.emoji-btn.on{border-color:#667eea;background:#F0F4FF;}
+.pkg-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);}
+.pkg-item:last-child{border-bottom:none;}
+.pkg-item-main{flex:1;min-width:0;}
+.pkg-item-name{font-size:13px;font-weight:600;}
+.pkg-item-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.pkg-item-acts{display:flex;gap:4px;flex-shrink:0;}
+#pf-course-hint{font-size:13px;color:var(--text-muted);margin-bottom:14px;}
+
+/* 锁定状态（只读：保留课时包查看入口，禁用一切编辑/添加/删除） */
+body.locked .status-btn,
+body.locked .note-input,
+body.locked .edit-btn,
+body.locked .del-btn,
+body.locked .toolbar-btn.danger,
+body.locked .ov-edit-btn,
+body.locked .add-class-btn,
+body.locked .wd-btn,
+body.locked .emoji-btn{pointer-events:none;opacity:0.4;cursor:not-allowed;}
+body.locked .month-header{pointer-events:auto;}
+
+@media (max-width:520px){
+  .overview{flex-direction:column;}
+  .ov-card{min-width:unset;}
+  .note-input{width:60px;}
+  .lesson-item{gap:6px;}
+}
+
+/* ===== 今日课程提醒 ===== */
+.today-box{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;border-left:5px solid #28C76F;}
+.today-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#E8F8EF;color:#1B7A47;}
+.today-head .th-title{font-size:15px;font-weight:800;letter-spacing:.5px;}
+.today-head .th-date{font-size:12px;opacity:.8;font-variant-numeric:tabular-nums;}
+.today-empty{padding:22px 16px;text-align:center;color:var(--text-muted);font-size:14px;}
+.today-list{padding:2px 6px 8px;}
+.today-item{display:flex;align-items:center;gap:10px;padding:11px 10px;border-bottom:1px solid #F0F2F5;cursor:pointer;transition:background .15s;}
+.today-item:last-child{border-bottom:none;}
+.today-item:hover{background:#FAFBFD;}
+.today-emoji{font-size:22px;width:32px;text-align:center;flex:0 0 auto;}
+.today-main{flex:1;min-width:0;}
+.today-name{font-size:14px;font-weight:700;color:var(--text);}
+.today-sub{font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+.today-time{font-size:16px;font-weight:800;color:#2D3748;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right;}
+.today-time .tv{font-size:13px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.today-time .tv.now{background:#28C76F;color:#fff;}
+.today-time .tv.done{background:#E2E8F0;color:#718096;}
+.today-item.now{background:linear-gradient(90deg,#E8F8EF,#fff);}
+.today-item.done{opacity:.45;}
+
+/* ===== 日历折叠 ===== */
+.cal-fold-head{display:flex;align-items:center;justify-content:space-between;padding:10px 4px 8px;cursor:pointer;user-select:none;}
+.cal-fold-head .cf-title{font-size:15px;font-weight:700;}
+.cal-fold-arrow{font-size:13px;color:var(--text-muted);transition:transform .2s;display:inline-block;}
+.cal-fold-arrow.open{transform:rotate(90deg);}
+.cal-body.collapsed{display:none;}
+
+/* 今日模块：待上课更醒目（绿色强调，提示“今天该上”） */
+.today-item.pending .today-time{color:#1B7A47;}
+.today-item.pending{border-left:3px solid #28C76F;background:linear-gradient(90deg,#F4FBF7,#fff);}
+
+/* 数据恢复提示 */
+.recovery-note{background:#E8F1FF;border:1px solid #B7D3FF;color:#1B3A6B;border-radius:var(--radius);margin-bottom:14px;overflow:hidden;font-size:13px;}
+.recovery-note .rn-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;font-weight:700;}
+.recovery-note .rn-head .rn-toggle{margin-left:auto;font-size:12px;color:#3B6FB8;}
+.recovery-note .rn-body{padding:0 12px 12px;line-height:1.75;}
+.recovery-note .rn-body b{color:#0B2E5C;}
+.recovery-note p{margin:8px 0 0;}
+.recovery-note ol{margin:6px 0 0;padding-left:20px;}
+.recovery-note code{background:#fff;padding:1px 5px;border-radius:4px;border:1px solid #CFE0FF;}
+/* 未备份提醒（有改动尚未导出时显示） */
+.backup-warn{display:none;background:#FFF4E5;color:#B26A00;border:1px solid #FFD8A8;font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:var(--radius);margin-bottom:12px;line-height:1.6;}
+body.dirty .backup-warn{display:block;}
+.backup-warn b{color:#8A4B00;}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 课时追踪器</h1>
+  <p>正常→请假→假期→调课→补课 · 支持多课程 / 多课时包 / 按年滚动</p>
+</header>
+<div class="recovery-note" id="recovery-note">
+  <div class="rn-head" onclick="toggleRecovery()">⚠️ 看不到你之前的数据？点这里看恢复方法 <span class="rn-toggle" id="rn-toggle">展开 ▾</span></div>
+  <div class="rn-body" id="rn-body" style="display:none">
+    <p>本应用的数据保存在你<strong>打开这个 HTML 文件的浏览器</strong>里，且与<strong>文件打开位置（完整路径）绑定</strong>。换位置 / 改文件名 / 换浏览器 / 无痕窗口，浏览器都会当成"另一个应用"，读不到旧数据。</p>
+    <p><b>📱 手机用户特别注意：</b></p>
+    <ul>
+      <li>用微信 / QQ <strong>直接预览</strong>打开，每次都是临时路径，数据几乎一定丢失 → 请用手机<strong>「文件管理」</strong>把 HTML 存进一个<strong>固定文件夹</strong>，从那里打开。</li>
+      <li>iPhone 的 Safari 对本地 HTML 的存储经常<strong>不保留</strong>（关掉文件数据就可能清空），这是系统限制，不是本应用的问题。</li>
+    </ul>
+    <p><b>恢复方法（按顺序试）：</b></p>
+    <ol>
+      <li>找到你<strong>当初记录数据时打开文件的那个手机文件夹</strong>，把当前这个 <code>课时追踪器-2026.html</code> 放进去，从那里打开 → 旧数据可能自动出现。</li>
+      <li>数据一出现，立刻点工具栏 <b>📦 自包含备份</b>（数据内嵌进文件，换哪都丢不了）。</li>
+      <li>若你之前导出过 <b>💾 备份</b> JSON 或 <b>📦 自包含备份</b> .html，用 <b>📂 导入</b> 选它恢复。</li>
+      <li>若既无备份、又找不到原打开位置（或 iPhone 已清存储），数据确实无法找回，只能重录。</li>
+    </ol>
+  </div>
+</div>
+<div class="backup-warn" id="backup-warn">⚠️ 有改动尚未备份！点工具栏 <b>📦 自包含备份</b> 把数据存进文件，换手机 / 换路径都不会丢。</div>
+<div class="container">
+  <div class="today-box" id="today-box"></div>
+  <div class="calendar-box" id="calendar-box"></div>
+  <div class="overview" id="overview"></div>
+  <div class="legend" id="legend"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="toolbar">
+    <button class="toolbar-btn" id="lock-btn" onclick="toggleLock()">🔒 锁定</button>
+    <button class="toolbar-btn" onclick="scrollToToday()">📅 跳转今天</button>
+    <button class="toolbar-btn" onclick="openCourseForm('add')">➕ 添加课程</button>
+    <button class="toolbar-btn" onclick="exportData()">💾 导出</button>
+    <button class="toolbar-btn" onclick="document.getElementById('import-file').click()">📂 导入</button>
+    <button class="toolbar-btn" onclick="exportSelfContained()">📦 自包含备份</button>
+    <button class="toolbar-btn danger" onclick="confirmReset()">🔄 重置数据</button>
+    <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(this)">
+  </div>
+  <div id="tab-container"></div>
+</div>
+
+<!-- 补课/调课弹窗 -->
+<div class="modal-overlay" id="extra-modal">
+  <div class="modal-box">
+    <h3 id="extra-modal-title"></h3>
+    <label>新日期</label>
+    <input type="date" id="extra-date" />
+    <label>新时间</label>
+    <span id="extra-time-wrap"></span>
+    <label>备注（选填）</label>
+    <input type="text" id="extra-note" placeholder="" />
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeExtraModal()">取消</button>
+      <button class="modal-btn primary" id="extra-confirm-btn">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 课时包管理弹窗 -->
+<div class="modal-overlay" id="pkg-manage-modal">
+  <div class="modal-box">
+    <h3 id="pm-title">📦 课时包管理</h3>
+    <div id="pm-list"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="modal-btn cancel" onclick="closePkgManage()">关闭</button>
+      <button class="modal-btn primary" id="pm-add-btn" onclick="openPkgForm('add')">➕ 添加课时包</button>
+    </div>
+  </div>
+</div>
+
+<!-- 课时包 添加/编辑 弹窗 -->
+<div class="modal-overlay" id="pkg-form-modal">
+  <div class="modal-box">
+    <h3 id="pf-title">➕ 添加课时包</h3>
+    <div id="pf-course-hint"></div>
+    <label>课时包名称（选填）</label>
+    <input type="text" id="pf-name" placeholder="如：春季班续费" />
+    <label>课节数</label>
+    <input type="number" id="pf-lessons" placeholder="如：20" min="1" />
+    <label>开始日期</label>
+    <input type="date" id="pf-start" />
+    <label>最后一天上课（选填）</label>
+    <input type="date" id="pf-last" />
+    <label>上课星期</label>
+    <div class="wd-picker" id="pf-weekdays"></div>
+    <div id="pf-times"></div>
+    <div style="font-size:11px;color:var(--text-muted);margin:-4px 0 12px;line-height:1.5;">修改星期/开始日期会按新计划重排该包课次，已记录状态将按课次顺序保留。</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closePkgForm()">取消</button>
+      <button class="modal-btn primary" onclick="savePkgForm()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 添加上课弹窗 -->
+<div class="modal-overlay" id="ac-modal">
+  <div class="modal-box">
+    <h3>➕ 添加上课</h3>
+    <div id="ac-course-name" style="font-size:13px;color:var(--text-muted);margin-bottom:14px;"></div>
+    <label>所属课时包</label>
+    <select id="ac-pkg"></select>
+    <label>上课日期</label>
+    <input type="date" id="ac-date" />
+    <label>上课时间（选填）</label>
+    <span id="ac-time-wrap"></span>
+    <label>备注（选填）</label>
+    <input type="text" id="ac-note" placeholder="" />
+    <div style="font-size:11px;color:var(--text-muted);margin:-6px 0 12px;line-height:1.5;">添加后该课会自动按日期/时间排入对应月份，与原有课表合并排序。</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeAddClassModal()">取消</button>
+      <button class="modal-btn primary" onclick="saveAddClass()">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 课程 添加/编辑 弹窗 -->
+<div class="modal-overlay" id="course-modal">
+  <div class="modal-box">
+    <h3 id="cf-title">➕ 添加课程</h3>
+    <label>课程名称</label>
+    <input type="text" id="cf-name" placeholder="如：钢琴课" />
+    <label>图标</label>
+    <div class="emoji-picker" id="cf-emoji"></div>
+    <label>每节课课时数（小时）</label>
+    <input type="number" id="cf-hours" min="1" value="1" />
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeCourseForm()">取消</button>
+      <button class="modal-btn primary" onclick="saveCourseForm()">保存</button>
+    </div>
+    <div id="cf-delete-wrap" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 默认课程（仅用于首次初始化；之后课程定义存于用户数据）
+// ============================================================
+const DEFAULT_COURSES = {
+  writing: { name:'书法课', emoji:'✏️', color:'#6C63FF', hoursPerLesson:1, weekdays:[2], time:'17:00-18:30', startDate:'2026-03-17', initLessons:42 },
+  english: { name:'英语课', emoji:'📖', color:'#28C76F', hoursPerLesson:2, weekdays:[4,6], times:{4:'17:15-18:45',6:'10:30-12:00'}, time:'', startDate:'2026-03-21', initLessons:36 },
+  drawing: { name:'画画课', emoji:'🎨', color:'#FF9F43', hoursPerLesson:1, weekdays:[3], time:'17:00-18:30', startDate:'2026-05-06', parentClassIndex:13, initLessons:27 },
+};
+const COLOR_PALETTE = ['#6C63FF','#28C76F','#FF9F43','#FF6B6B','#4D96FF','#9B59B6','#E67E22','#1ABC9C','#E84393','#00B894'];
+const EMOJI_PALETTE = ['✏️','📖','🎨','🎵','⚽','🏊','🧮','🔬','💻','🎹','🏀','🎲','🎸','🥋','🚀'];
+const WD_NAME = ['日','一','二','三','四','五','六'];
+
+// ============================================================
+// 工具函数
+// ============================================================
+function parseDate(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
+function formatDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function weekdayName(d){return WD_NAME[d.getDay()];}
+function monthLabel(d){return d.getFullYear()+'年'+(d.getMonth()+1)+'月';}
+function monthKey(ml){const m=ml&&ml.match(/(\d+)年(\d+)月/);return m?parseInt(m[1])*12+(parseInt(m[2])-1):-1;}
+function today(){return formatDate(new Date());}
+function wdText(arr){return (arr||[]).map(w=>'周'+WD_NAME[w]).join('、');}
+function formatUpdateTime(iso){
+  if(!iso) return '暂无记录';
+  const d=new Date(iso), now=new Date(), diff=(now-d)/1000;
+  if(diff<60) return '刚刚';
+  if(diff<3600) return Math.floor(diff/60)+'分钟前';
+  if(diff<86400 && d.toDateString()===now.toDateString()) return '今天 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+// 按课时包的星期/开始日期，生成课次日期
+function genPkgDates(pkg, count){
+  const dates=[];
+  let d=parseDate(pkg.startDate);
+  const wds=pkg.weekdays&&pkg.weekdays.length?pkg.weekdays:[2];
+  while(!wds.includes(d.getDay())) d.setDate(d.getDate()+1);
+  for(let i=0;i<count;i++){
+    dates.push(formatDate(d));
+    do { d.setDate(d.getDate()+1); } while(!wds.includes(d.getDay()));
+  }
+  return dates;
+}
+// 0 课时共享容器：按计划（星期/时间）生成"待记录"占位课次，便于在记录区/日历按排课显示
+function genPlannedDates(pkg){
+  const wd=pkg.weekdays&&pkg.weekdays.length?pkg.weekdays:[2];
+  if(!pkg.startDate) return [];
+  const start=parseDate(pkg.startDate);
+  let end;
+  if(pkg.lastDay){ end=parseDate(pkg.lastDay); }
+  else { end=new Date(start.getFullYear(), start.getMonth()+11, 1); }
+  const out=[];
+  let cur=new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  while(cur<=end){
+    if(wd.includes(cur.getDay())) out.push(formatDate(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+  return out;
+}
+function pkgTimeFor(pkg, dateStr){
+  if(pkg.times){ const w=parseDate(dateStr).getDay(); return pkg.times[w]||pkg.time||''; }
+  return pkg.time||'';
+}
+function pkgTimeText(pkg){
+  if(pkg.times && Object.keys(pkg.times).length){
+    return Object.keys(pkg.times).map(w=>'周'+WD_NAME[w]+' '+pkg.times[w]).join('，');
+  }
+  return pkg.time||'—';
+}
+// 上课时间：起、止两个原生时间输入（移动端为滚轮选择器，任意时间均可，简洁灵活）
+function pad2(n){ n=(''+n).trim(); return n.length<2 ? '0'+n : n; }
+function splitTimeVal(v){
+  if(!v) return ['',''];
+  let m=v.match(/(\d{1,2}):(\d{2})\s*[-\u2013~]\s*(\d{1,2}):(\d{2})/);
+  if(m) return [pad2(m[1])+':'+m[2], pad2(m[3])+':'+m[4]];
+  m=v.match(/(\d{1,2}):(\d{2})/);
+  if(m) return [pad2(m[1])+':'+m[2],''];
+  return ['',''];
+}
+function timeRangeHTML(baseId, val){
+  const sv=splitTimeVal(val);
+  return `<span class="time-range">`+
+    `<input type="time" id="${baseId}-start" value="${sv[0]}" />`+
+    `<span class="time-sep">–</span>`+
+    `<input type="time" id="${baseId}-end" value="${sv[1]}" /></span>`;
+}
+function readTimeRangeVal(baseId){
+  const s=(document.getElementById(baseId+'-start').value||'').trim();
+  const e=(document.getElementById(baseId+'-end').value||'').trim();
+  if(s&&e) return s+'-'+e;
+  return s||e||'';
+}
+// 课表排序：先日期，同日再时间
+function cmpRecords(a,b){
+  if(a.date!==b.date) return a.date<b.date ? -1 : 1;
+  const ta=a.time||'', tb=b.time||'';
+  return ta<tb ? -1 : (ta>tb ? 1 : 0);
+}
+
+// ============================================================
+// localStorage（固定key，永不更改）
+// ============================================================
+const STORAGE_KEY = 'course_tracker_final';
+let _dirty=false; // 是否有未备份的改动（用于"未备份提醒"）
+function markDirty(){ _dirty=true; try{ document.body.classList.add('dirty'); }catch(e){} }
+function clearDirty(){ _dirty=false; try{ document.body.classList.remove('dirty'); }catch(e){} }
+function loadData(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); }catch(e){} return null; }
+function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); markDirty(); }
+// 判断是否仍是初始种子数据（用户尚未自建课时包 / 手动课）
+function isFreshSeed(data){
+  const cids=Object.keys((data&&data.coursesMeta)||{});
+  if(!cids.length) return true;
+  for(const cid of cids){
+    const pkgs=(data.packages&&data.packages[cid])||[];
+    if(pkgs.length!==1) return false;
+    if(pkgs[0].name!=='初始课时包') return false;
+  }
+  for(const cid of cids){
+    if(((data.courses&&data.courses[cid])||[]).some(r=>r.manual)) return false;
+  }
+  return true;
+}
+function toggleRecovery(){
+  const b=document.getElementById('rn-body'); const t=document.getElementById('rn-toggle');
+  if(!b||!t) return;
+  const show=b.style.display==='none';
+  b.style.display=show?'block':'none';
+  t.textContent=show?'收起 ▴':'展开 ▾';
+}
+
+// ============================================================
+// 课程/课时包 → 课表重建
+// ============================================================
+function getCourseTotals(courseId, data){
+  data=data||appData;
+  const pkgs=(data&&data.packages&&data.packages[courseId])||[];
+  const lessons=pkgs.reduce((s,p)=>s+(parseInt(p.lessons,10)||0),0);
+  const meta=(data&&data.coursesMeta&&data.coursesMeta[courseId])||{};
+  const hp=meta.hoursPerLesson||1;
+  return {lessons, hours:lessons*hp, packages:pkgs};
+}
+// 按课时包重建某课程的全部课次；按 包+序号 保留已记录状态，手动添加课原样保留
+function rebuildCourse(courseId, data){
+  const pkgs=data.packages[courseId]||[];
+  const old=data.courses[courseId]||[];
+  const oldByPkg={};
+  const manualList=[];
+  old.forEach(r=>{
+    if(r.manual){ manualList.push(r); return; }
+    const k=r.pkgId || (pkgs.length?pkgs[0].id:'__none');
+    (oldByPkg[k]=oldByPkg[k]||[]).push(r);
+  });
+  const result=[];
+  pkgs.forEach(pkg=>{
+    const count=pkg.lessons||0;
+    const dates = count>0 ? genPkgDates(pkg, count) : genPlannedDates(pkg);
+    const oldList=oldByPkg[pkg.id]||[];
+    dates.forEach((d,j)=>{
+      const o=oldList[j]||{};
+      result.push({
+        date:d, pkgId:pkg.id, time:pkgTimeFor(pkg,d), manual:false,
+        status:o.status||'pending', note:o.note||'',
+        extraDate:o.extraDate||'', extraTime:o.extraTime||'', extraNote:o.extraNote||'',
+        isParentClass:!!o.isParentClass, deleted:!!o.deleted,
+      });
+    });
+  });
+  manualList.forEach(r=>result.push(r));
+  result.sort(cmpRecords);
+  data.courses[courseId]=result;
+}
+function syncAll(data){ for(const id in data.coursesMeta) rebuildCourse(id, data); }
+
+function initData(){
+  const data={ coursesMeta:{}, packages:{}, courses:{}, lastUpdate:{} };
+  for(const [id,cfg] of Object.entries(DEFAULT_COURSES)){
+    data.coursesMeta[id]={ id, name:cfg.name, emoji:cfg.emoji, color:cfg.color, hoursPerLesson:cfg.hoursPerLesson };
+    if(cfg.parentClassIndex!==undefined) data.coursesMeta[id].parentClassIndex=cfg.parentClassIndex;
+    data.packages[id]=[{ id:'p1', name:'初始课时包', lessons:cfg.initLessons, weekdays:cfg.weekdays.slice(), time:cfg.time||'', times:cfg.times?Object.assign({},cfg.times):null, startDate:cfg.startDate, addedAt:'' }];
+    data.lastUpdate[id]='';
+  }
+  syncAll(data);
+  return data;
+}
+
+// ============================================================
+// 状态逻辑
+// ============================================================
+const STATUS_CYCLE = ['normal','absent','holiday','reschedule','makeup','pending'];
+function cycleStatus(current, isParent){
+  if(isParent){ if(current==='parent') return 'absent'; if(current==='absent') return 'parent'; return 'parent'; }
+  if(current==='pending') return 'normal';
+  const idx=STATUS_CYCLE.indexOf(current);
+  if(idx===-1) return 'normal';
+  return STATUS_CYCLE[(idx+1)%STATUS_CYCLE.length];
+}
+
+// ============================================================
+// 统计
+// ============================================================
+function calcStats(courseId, records, data){
+  const cfg=(data.coursesMeta&&data.coursesMeta[courseId])||{hoursPerLesson:1};
+  const tot=getCourseTotals(courseId, data);
+  let attended=0,absent=0,makeup=0,holiday=0,reschedule=0,parentClass=0,absentMadeup=0,rescheduleDone=0;
+  for(const r of records){
+    if(r.deleted) continue;
+    if(r.status==='normal') attended++;
+    else if(r.status==='absent'){ absent++; if(r.extraDate) absentMadeup++; }
+    else if(r.status==='makeup') makeup++;
+    else if(r.status==='holiday') holiday++;
+    else if(r.status==='reschedule'){ reschedule++; if(r.extraDate) rescheduleDone++; }
+    else if(r.status==='parent') parentClass++;
+  }
+  const consumed = (attended + makeup + parentClass + absentMadeup + rescheduleDone) * cfg.hoursPerLesson;
+  const remaining = tot.hours - consumed;
+  const percent = tot.hours>0 ? Math.min(100, Math.round((consumed/tot.hours)*100)) : 0;
+  return { attended, absent, holiday, reschedule, makeup: makeup+absentMadeup, parentClass, consumed, remaining, percent, totalLessons:tot.lessons, totalHours:tot.hours, packages:tot.packages };
+}
+// 单个课时包统计：课时总数 / 已消耗 / 剩余（节）
+function pkgStats(courseId, pkgId, data){
+  const cfg=(data.coursesMeta&&data.coursesMeta[courseId])||{hoursPerLesson:1};
+  const hp=cfg.hoursPerLesson||1;
+  const pkgs=data.packages[courseId]||[];
+  const pkg=pkgs.find(p=>p.id===pkgId);
+  const total = pkg ? (parseInt(pkg.lessons,10)||0) : 0;
+  const firstId = pkgs.length ? pkgs[0].id : '';
+  const records=(data.courses[courseId]||[]).filter(r=>{ const pid=r.pkgId||firstId; return pid===pkgId; });
+  const consumedLessons = calcStats(courseId, records, data).consumed / hp;
+  return { total, remaining: total - consumedLessons };
+}
+
+// ============================================================
+// 状态显示
+// ============================================================
+function getStatusLabel(status, isParent){
+  if(isParent && status==='pending') return {text:'亲子课',cls:'status-parent'};
+  const map = {
+    normal:{text:'✅ 正常',cls:'status-normal'},
+    absent:{text:'🔴 请假',cls:'status-absent'},
+    holiday:{text:'🏖️ 假期',cls:'status-holiday'},
+    reschedule:{text:'🔄 调课',cls:'status-makeup'},
+    makeup:{text:'📅 补课',cls:'status-makeup'},
+    parent:{text:'👨‍👩‍👧 亲子课',cls:'status-parent'},
+    pending:{text:'待上课',cls:'status-pending'},
+    unrecorded:{text:'⚠️ 待记录',cls:'status-unrecorded'},
+  };
+  return map[status] || map.pending;
+}
+function getActualStatus(record){
+  const t=today();
+  if(record.status==='pending'){ if(record.date<=t) return 'unrecorded'; return 'pending'; }
+  return record.status;
+}
+
+// ============================================================
+// 日历渲染
+// ============================================================
+let calYear, calMonth, calSelDate;
+let calCollapsed=true;   // 月视图日历默认收起，首屏突出"今日课程"
+// 相对日期标签（今天/昨天/明天/周X）
+function relDay(ds){
+  if(!ds) return '';
+  const t=today();
+  const y=formatDate(new Date(new Date().setDate(new Date().getDate()-1)));
+  const m=formatDate(new Date(new Date().setDate(new Date().getDate()+1)));
+  if(ds===t) return '今天';
+  if(ds===y) return '昨天';
+  if(ds===m) return '明天';
+  return '周'+WD_NAME[parseDate(ds).getDay()];
+}
+// ===== 时间区间辅助 =====
+function timeRangeStart(timeStr){ const m=timeStr && timeStr.match(/(\d{1,2}):(\d{2})/); return m?(+m[1])*60+(+m[2]):9999; }
+function parseTimeRange(timeStr, baseDateStr){
+  if(!timeStr) return {start:null,end:null};
+  const m=timeStr.match(/(\d{1,2}):(\d{2})\s*[-~]\s*(\d{1,2}):(\d{2})/);
+  if(!m) return {start:null,end:null};
+  const d=parseDate(baseDateStr);
+  return {
+    start:new Date(d.getFullYear(),d.getMonth(),d.getDate(),+m[1],+m[2]),
+    end:new Date(d.getFullYear(),d.getMonth(),d.getDate(),+m[3],+m[4])
+  };
+}
+function fmtTimeRange(timeStr){ if(!timeStr) return '—'; return timeStr.replace(/\s*[-~]\s*/,' – '); }
+function pkgNameOf(pk){ return pk && pk.name ? pk.name : '课时包'; }
+
+// ===== 今日课程提醒模块 =====
+function renderToday(data){
+  const el=document.getElementById('today-box');
+  const t=today();
+  const items=[];
+  for(const [id,meta] of Object.entries(data.coursesMeta)){
+    const pkgs=data.packages[id]||[];
+    const firstId=pkgs.length?pkgs[0].id:'';
+    (data.courses[id]||[]).forEach(r=>{
+      if(r.deleted) return;
+      const pk=pkgs.find(p=>p.id===(r.pkgId||firstId));
+      const expired = pk && pk.lastDay ? (d)=> d>pk.lastDay : null;
+      const baseTime=()=> r.time || (pk?pkgTimeFor(pk,t):'') || meta.time || '';
+      if(r.date===t){
+        if(expired && expired(t)) return;   // 与日历一致：跳过已过有效期的课
+        items.push({cid:id,meta,time:baseTime(),pkgName:pkgNameOf(pk),status:r.status,isParent:!!r.isParentClass,key:'d'+r.idx});
+      }
+      if(r.extraDate===t && (r.status==='absent'||r.status==='reschedule'||r.status==='makeup')){
+        if(expired && expired(t)) return;
+        const time=r.extraTime||r.time||meta.time||'';
+        const label=r.status==='reschedule'?'🔄 调到今日':'📅 补到今日';
+        items.push({cid:id,meta,time,pkgName:pkgNameOf(pk),status:r.status,isParent:false,extraLabel:label,key:'e'+r.idx});
+      }
+    });
+  }
+  items.sort((a,b)=>timeRangeStart(a.time)-timeRangeStart(b.time));
+  const wd=WD_NAME[parseDate(t).getDay()];
+  let html=`<div class="today-head"><div class="th-title">📌 今日课程 · ${wd}</div><div class="th-date">${t}</div></div>`;
+  if(items.length===0){
+    html+=`<div class="today-empty">🎉 今天没有排课，好好休息~</div>`;
+  } else {
+    const now=new Date();
+    html+='<div class="today-list">';
+    items.forEach(it=>{
+      const sl=getStatusLabel(it.status,it.isParent);
+      let state='', tag='';
+      const se=parseTimeRange(it.time,t);
+      if(se.start && se.end){
+        if(now>se.end){ state='done'; tag='<span class="tv done">已结束</span>'; }
+        else if(now>=se.start){ state='now'; tag='<span class="tv now">进行中</span>'; }
+      }
+      const extra=it.extraLabel?`<span style="color:#1078A8">${it.extraLabel}</span> · `:'';
+      const sub=`<div class="today-sub">${extra}${it.pkgName} · <span class="${sl.cls}">${sl.text}</span></div>`;
+      const pendCls = it.status==='pending' ? ' pending' : '';
+      html+=`<div class="today-item ${state}${pendCls}" onclick="switchTab('${it.cid}')">
+        <div class="today-emoji">${it.meta.emoji}</div>
+        <div class="today-main"><div class="today-name">${it.meta.name}</div>${sub}</div>
+        <div class="today-time">${fmtTimeRange(it.time)}${tag}</div>
+      </div>`;
+    });
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+function toggleCal(){ calCollapsed=!calCollapsed; renderCalendar(appData); }
+
+function renderCalendar(data){
+  if(!calYear){ const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth(); }
+  if(!calSelDate) calSelDate=today();
+  const el=document.getElementById('calendar-box'), t=today();
+  const classMap={};
+  for(const [id,meta] of Object.entries(data.coursesMeta)){
+    const pkgs=data.packages[id]||[];
+    const firstId=pkgs.length?pkgs[0].id:'';
+    (data.courses[id]||[]).forEach(r=>{
+      if(r.deleted) return;
+      const pid=r.pkgId||firstId;
+      const pk=pkgs.find(p=>p.id===pid);
+      const expired= pk && pk.lastDay ? (d)=> d>pk.lastDay : null;
+      if(r.date){ if(expired && expired(r.date)) return; if(!classMap[r.date]) classMap[r.date]=[]; classMap[r.date].push({id,meta,status:r.status,isExtra:false}); }
+      if(r.extraDate && (r.status==='absent'||r.status==='reschedule'||r.status==='makeup')){
+        if(expired && expired(r.extraDate)) return;
+        if(!classMap[r.extraDate]) classMap[r.extraDate]=[];
+        classMap[r.extraDate].push({id,meta,status:r.status,isExtra:true});
+      }
+    });
+  }
+  const firstDay=new Date(calYear,calMonth,1), lastDay=new Date(calYear,calMonth+1,0);
+  const startWeekday=firstDay.getDay(), daysInMonth=lastDay.getDate();
+  let html=`<div class="cal-fold-head" onclick="toggleCal()"><div class="cf-title">📅 课程日历</div><span class="cal-fold-arrow ${calCollapsed?'':'open'}">${calCollapsed?'▸':'▾'}</span></div><div class="cal-body ${calCollapsed?'collapsed':''}"><div class="cal-header"><div class="cal-title">📅 ${calYear}年${calMonth+1}月</div><div class="cal-nav-block">
+    <div class="cal-nav">
+      <button onclick="calPrevYear()" title="上一年">«</button>
+      <button onclick="calPrev()" title="上一月">‹</button>
+      <button class="cal-today-btn" onclick="calGoToday()">今天</button>
+      <button onclick="calNext()" title="下一月">›</button>
+      <button onclick="calNextYear()" title="下一年">»</button>
+    </div>
+    <div class="cal-nav">
+      <button class="cal-day-btn" onclick="calShiftDay(-1)">← 昨天</button>
+      <button class="cal-day-btn" onclick="calShiftDay(1)">明天 →</button>
+    </div></div></div>
+    <div class="cal-grid"><div class="cal-dow weekend">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div><div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow weekend">六</div>`;
+  for(let i=0;i<startWeekday;i++) html+='<div class="cal-cell empty"></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const classes=classMap[dateStr]||[], hasClass=classes.length>0, isToday=dateStr===t, isSelected=dateStr===calSelDate;
+    const dow=new Date(calYear,calMonth,day).getDay(), isWeekend=dow===0||dow===6;
+    let dots='',labels='',statusMark='';
+    classes.forEach(c=>{
+      const short=c.meta.name.replace('课','');
+      dots+=`<div class="cal-dot" style="background:${c.meta.color}"></div>`;
+      let prefix=c.isExtra?(c.status==='reschedule'?'🔄':'📅'):'';
+      labels+=`<div class="cal-label-${c.id}" style="color:${c.meta.color}">${prefix}${short}</div>`;
+    });
+    html+=`<div class="cal-cell ${hasClass?'has-class':''} ${isToday?'today':''} ${isSelected?'selected':''} ${isWeekend?'weekend':''}" onclick="calSelectDate('${dateStr}')">
+      <div class="cal-day">${day}</div>${statusMark?`<div class="cal-status">${statusMark}</div>`:''}<div class="cal-dots">${dots}</div><div class="cal-labels">${labels}</div></div>`;
+  }
+  html+='</div>';
+  html+=`<div style="display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--text-muted);flex-wrap:wrap;align-items:center;">
+    <span>✅已上 🔴请假 🏖️假期 🔄调课 📅补课</span>
+    <span class="cal-sel-info">📌 已选：<b style="color:#28C76F">${calSelDate} ${relDay(calSelDate)}</b></span></div>`;
+  el.innerHTML=html+'</div>';
+}
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
+function calPrevYear(){ calYear--; renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
+function calNextYear(){ calYear++; renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
+function calGoToday(){ const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth(); calSelDate=today(); renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
+// 点击某天：选中并跳到该天所在月份
+function calSelectDate(ds){
+  calSelDate=ds;
+  const d=parseDate(ds);
+  calYear=d.getFullYear(); calMonth=d.getMonth();
+  renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`);
+}
+// 昨天 / 明天：以当前选中日为基准 ±1 天，并跳到对应月份
+function calShiftDay(delta){
+  const base=calSelDate?parseDate(calSelDate):new Date();
+  base.setDate(base.getDate()+delta);
+  calSelDate=formatDate(base);
+  calYear=base.getFullYear(); calMonth=base.getMonth();
+  renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`);
+}
+// 日历翻到某月时，联动展开并滚动记录区对应月份
+function scrollRecordToMonth(ml){
+  const active=document.querySelector('.tab-content.active');
+  if(!active) return;
+  const groups=active.querySelectorAll('.month-group');
+  for(const g of groups){
+    const hdr=g.querySelector('.month-header');
+    if(!hdr) continue;
+    const lbl=hdr.textContent.replace(/[▼▶]/g,'').replace(/\s+/g,'');
+    if(lbl.indexOf(ml)===0){
+      if(g.classList.contains('collapsed')){
+        const arrow=g.querySelector('.month-arrow');
+        g.classList.remove('collapsed'); if(arrow) arrow.classList.remove('collapsed');
+        expandedMonths.add(`${activeCourse}|${ml}`);
+      }
+      g.scrollIntoView({behavior:'smooth',block:'start'});
+      return;
+    }
+  }
+}
+
+// ============================================================
+// 图例 / 总览 / Tabs 渲染
+// ============================================================
+function renderLegend(data){
+  const el=document.getElementById('legend');
+  let html='';
+  for(const [id,meta] of Object.entries(data.coursesMeta)){
+    html+=`<div class="legend-item"><div class="legend-dot" style="background:${meta.color}"></div> ${meta.name}</div>`;
+  }
+  el.innerHTML=html;
+}
+function renderOverview(data){
+  const el=document.getElementById('overview');
+  let html='';
+  for(const [id,meta] of Object.entries(data.coursesMeta)){
+    const records=data.courses[id]||[];
+    const s=calcStats(id,records,data);
+    const lastTime=formatUpdateTime(data.lastUpdate?.[id]||'');
+    const pkgText = s.packages.length>1 ? `${s.packages.length}个课时包 · 共${s.totalLessons}节` : `共${s.totalLessons}节`;
+    html+=`<div class="ov-card" onclick="switchTab('${id}')" style="border-top-color:${meta.color}">
+      <button class="ov-edit-btn" onclick="event.stopPropagation();openCourseForm('edit','${id}')" title="编辑课程">⚙️</button>
+      <div class="ov-title">${meta.emoji} ${meta.name}</div>
+      <div class="ov-main"><div class="ov-remain">${s.remaining}<span> 课时剩余</span></div>
+      <div class="ov-meta">${s.consumed}/${s.totalHours} 已消耗<br><span style="font-size:11px;">⏱️ ${lastTime}</span></div></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${s.percent}%;background:${meta.color}"></div></div>
+      <div class="ov-stats">
+        <div class="ov-stat">出勤 <b>${s.attended}</b></div>
+        <div class="ov-stat">请假 <b>${s.absent}</b></div>
+        <div class="ov-stat">假期 <b>${s.holiday}</b></div>
+        <div class="ov-stat">调课 <b>${s.reschedule}</b></div>
+        <div class="ov-stat">补课 <b>${s.makeup}</b></div>
+        ${s.parentClass>0?`<div class="ov-stat">亲子 <b>${s.parentClass}</b></div>`:''}
+      </div>
+      <div class="ov-pkg-row"><span class="ov-pkg-info">📦 ${pkgText}</span><button class="ov-pkg-btn" onclick="event.stopPropagation();openPkgManage('${id}')">📦 课时包</button></div>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+function renderTabs(){
+  const t=document.getElementById('tabs');
+  let html='';
+  for(const [id,meta] of Object.entries(appData.coursesMeta)){
+    const active = id===activeCourse ? 'active' : '';
+    const style = id===activeCourse ? `background:${meta.color};border-color:${meta.color};color:#fff;` : '';
+    html+=`<button class="tab-btn ${active}" onclick="switchTab('${id}')" style="${style}">${meta.emoji} ${meta.name}</button>`;
+  }
+  t.innerHTML=html;
+}
+
+// ============================================================
+// 课程列表渲染
+// ============================================================
+let expandedMonths = new Set();
+let pkgExpanded = new Set(), pkgCollapsed = new Set();
+// 课时包块是否展开：已设"最后一天上课"且当前月份在其之后的包，默认折叠（不重复展示）
+function pkgIsExpanded(key, completed){ if(pkgExpanded.has(key)) return true; if(pkgCollapsed.has(key)) return false; return !completed; }
+function pkgDoneInMonth(pk, ml){ if(!pk||!pk.lastDay) return false; const ld=parseDate(pk.lastDay); return monthKey(ml) >= (ld.getFullYear()*12 + ld.getMonth()); }
+
+function renderTab(courseId, data, el){
+  el = el || document.getElementById(`tab-${courseId}`);
+  const meta=data.coursesMeta[courseId], records=data.courses[courseId]||[];
+  const tot=getCourseTotals(courseId,data);
+  const hp=(data.coursesMeta[courseId]&&data.coursesMeta[courseId].hoursPerLesson)||1;
+  const courseRemLessons=Math.max(0, Math.round(calcStats(courseId,records,data).remaining/hp));
+  const t=today();
+  const head=`<div class="tab-head"><div class="tab-head-info">📦 ${tot.packages.length}个课时包 · 共 <b>${tot.lessons}</b> 节 / ${tot.hours} 课时</div>
+    <button class="toolbar-btn add-class-btn" onclick="openAddClass('${courseId}')">➕ 添加上课</button>
+    <button class="toolbar-btn" onclick="openPkgManage('${courseId}')">📦 课时包</button></div>`;
+  const pkgs=data.packages[courseId]||[];
+  const zeroPkgs=pkgs.filter(p=>(parseInt(p.lessons,10)||0)===0);
+  if(records.length===0 && zeroPkgs.length===0){
+    el.innerHTML=head+'<div class="empty-hint">该课程还没有课时包，点击「📦 课时包」添加并设定上课时间。</div>';
+    return;
+  }
+  let allItems=[];
+  records.forEach((record,idx)=>{
+    if(record.deleted) return;
+    const pid=record.pkgId||(pkgs.length?pkgs[0].id:'__none');
+    const pk=pkgs.find(p=>p.id===pid);
+    const exp = pk && pk.lastDay ? (d)=> d>pk.lastDay : null;
+    if(record.date && exp && exp(record.date)) return; // 有效期后的主课跳过（不显示）
+    allItems.push({type:'lesson',idx,record});
+    if(record.extraDate && (record.status==='absent'||record.status==='reschedule'||record.status==='makeup')){
+      if(!(exp && exp(record.extraDate))) allItems.push({type:'extra',idx,record});
+    }
+  });
+  let months=[], curMonth='', curGroup=[];
+  allItems.forEach(item=>{
+    const mo=monthLabel(parseDate(item.type==='lesson'?item.record.date:item.record.extraDate));
+    if(mo!==curMonth){ if(curGroup.length) months.push({label:curMonth,items:curGroup}); curMonth=mo; curGroup=[]; }
+    curGroup.push(item);
+  });
+  if(curGroup.length) months.push({label:curMonth,items:curGroup});
+
+  // 0课节包：在其覆盖月份内显示空包块（便于手动添加上课归位）
+  const zeroCover={};
+  if(zeroPkgs.length){
+    let maxML='';
+    months.forEach(m=>{ if(m.label>maxML) maxML=m.label; });
+    zeroPkgs.forEach(p=>{
+      let d=parseDate(p.startDate||today());
+      let endML;
+      if(p.lastDay){ endML=monthLabel(parseDate(p.lastDay)); }
+      else { let end=new Date(d.getFullYear(), d.getMonth()+11, 1); endML=monthLabel(end); }
+      if(maxML && maxML>endML) endML=maxML;
+      let cur=new Date(d.getFullYear(), d.getMonth(), 1);
+      const stop=parseDate(endML.replace('年','-').replace('月','-01'));
+      while(cur<=stop){
+        const ml=monthLabel(cur);
+        if(!zeroCover[ml]) zeroCover[ml]=[];
+        if(!zeroCover[ml].includes(p.id)) zeroCover[ml].push(p.id);
+        cur.setMonth(cur.getMonth()+1);
+      }
+    });
+    Object.keys(zeroCover).forEach(ml=>{ if(!months.find(m=>m.label===ml)) months.push({label:ml,items:[]}); });
+    months.sort((a,b)=> monthKey(a.label)-monthKey(b.label));
+  }
+
+  let html=head+'<div class="lesson-list">';
+  months.forEach((month,mi)=>{
+    const groupId=`mg-${courseId}-${mi}`;
+    const groupKey=`${courseId}|${month.label}`;
+    let mN=0,mA=0,mH=0,mR=0,mM=0,mE=0;
+    month.items.forEach(item=>{
+      if(item.type==='lesson'){ const s=item.record.status; if(s==='normal')mN++; else if(s==='absent')mA++; else if(s==='holiday')mH++; else if(s==='reschedule')mR++; else if(s==='makeup')mM++; }
+      else mE++;
+    });
+    const summary=`${month.items.length}条 | 出勤${mN} 请假${mA} 假期${mH} 调课${mR} 补课${mM}${mE>0?' 加课'+mE:''}`;
+    const isExpanded = expandedMonths.has(groupKey);
+    html+=`<div class="month-group ${isExpanded?'':'collapsed'}" id="${groupId}"><div class="month-header" onclick="toggleMonth('${groupId}','${groupKey}')"><span class="month-arrow ${isExpanded?'':'collapsed'}">▼</span> ${month.label}<span class="month-summary">${summary}</span></div>`;
+    // 月内再按课时包分组：先区分课时包，再展示该包课次
+    const byPkg={};
+    month.items.forEach(item=>{
+      const pid=(item.record.pkgId)||(pkgs.length?pkgs[0].id:'__none');
+      (byPkg[pid]=byPkg[pid]||[]).push(item);
+    });
+    const pkgOrder=pkgs.map(p=>p.id).filter(pid=>(byPkg[pid]&&byPkg[pid].length));
+    Object.keys(byPkg).forEach(pid=>{ if(!pkgOrder.includes(pid)) pkgOrder.push(pid); });
+    if(zeroCover[month.label]) zeroCover[month.label].forEach(pid=>{ if(!pkgOrder.includes(pid)) pkgOrder.push(pid); });
+    pkgOrder.forEach(pid=>{
+      let items=(byPkg[pid]||[]).slice().sort((a,b)=>{
+        const da=(a.type==='extra'?a.record.extraDate:a.record.date), db=(b.type==='extra'?b.record.extraDate:b.record.date);
+        if(da!==db) return da<db?-1:1;
+        const ta=(a.record.time||''), tb=(b.record.time||''); return ta<tb?-1:(ta>tb?1:0);
+      });
+      const pk=pkgs.find(p=>p.id===pid);
+      const pname=pk?pk.name:'未分包';
+      const pinfo=pk?`${wdText(pk.weekdays)} · ${pkgTimeText(pk)}`:'';
+      const ps=pkgStats(courseId, pid, data);
+      const isContainer = pk && (parseInt(pk.lessons,10)||0)===0;
+      const countText = isContainer ? `🔗 共享剩余 ${courseRemLessons} 节` : `共 ${ps.total} 节 · 剩 ${ps.remaining} 节`;
+      const completed = pkgDoneInMonth(pk, month.label);
+      const pkgKey=`${courseId}|${month.label}|${pid}`;
+      const expanded = pkgIsExpanded(pkgKey, completed);
+      const subArrow = expanded ? '▼' : '▶';
+      const lastInfo = (pk&&pk.lastDay) ? `<span class="pkg-subinfo">止${pk.lastDay}</span>` : '';
+      const doneTag = completed ? `<span class="pkg-tag-done">✅已结课</span>` : '';
+      const blockId=`pg-${groupId}-${pid}`;
+      const emptyHint = items.length===0 ? `<div class="pkg-empty">暂无课次 · 点「➕ 添加上课」选本包记录</div>` : '';
+      html+=`<div class="pkg-block${isContainer?' container':''}${expanded?'':' collapsed'}" id="${blockId}"><div class="pkg-subhead" onclick="togglePkg('${blockId}','${pkgKey}')"><span class="pkg-subarrow ${expanded?'':'collapsed'}">${subArrow}</span><span class="pkg-subname">📦 ${pname}</span>${pinfo?`<span class="pkg-subinfo">${pinfo}</span>`:''}${lastInfo}${doneTag}<span class="pkg-subcount">${countText}</span></div>${emptyHint}`;
+      let dn=0;
+      items.forEach(item=>{ dn++; html+=renderRecordItem(courseId,meta,pkgs,item,dn,t); });
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+// 单条课次/补课行渲染（供课时包分组复用）
+function renderRecordItem(courseId, meta, pkgs, item, dn, tStr){
+  if(item.type==='extra'){
+    const rec=item.record, d=parseDate(rec.extraDate);
+    const badge=rec.status==='reschedule'?'🔄 调课新时间':'📅 补课时间';
+    return `<div class="lesson-item extra-row"><div class="lesson-num" style="background:#1EAAE7;opacity:0.5">${dn}</div><div class="lesson-info"><div class="lesson-date">${rec.extraDate} 周${weekdayName(d)}<span class="lesson-tag" style="background:#E3F4FD;color:#1078A8;">${badge}</span></div><div class="lesson-time">${rec.extraTime||''}</div></div><div style="font-size:12px;color:var(--text-muted);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;">${rec.extraNote||''}</div><button class="edit-btn" onclick="editExtra('${courseId}',${item.idx})">✎ 修改</button><button class="del-btn" onclick="deleteExtra('${courseId}',${item.idx})">✕</button></div>`;
+  }
+  const rec=item.record, isParent=!!rec.isParentClass;
+  const actualStatus=getActualStatus(rec);
+  const {text,cls}=getStatusLabel(actualStatus,isParent);
+  const isToday=rec.date===tStr, d=parseDate(rec.date);
+  const hasPair=!!rec.extraDate && (rec.status==='absent'||rec.status==='reschedule'||rec.status==='makeup');
+  let extraTags='';
+  if(rec.status==='absent'&&rec.extraDate) extraTags+='<span class="lesson-tag tag-link-absent">→ 已补课</span>';
+  if(rec.status==='reschedule'&&rec.extraDate) extraTags+='<span class="lesson-tag tag-link-reschedule">→ 已调课</span>';
+  let actionBtn='';
+  if((rec.status==='absent'||rec.status==='reschedule'||rec.status==='makeup')&&!rec.extraDate){
+    const lbl=rec.status==='absent'?'补课':'调课新时间';
+    actionBtn=`<button class="edit-btn" onclick="addExtra('${courseId}',${item.idx})">➕${lbl}</button>`;
+  }
+  return `<div class="lesson-item ${isToday?'today':''} ${hasPair?'pair-parent':''}" id="lesson-${courseId}-${item.idx}"><div class="lesson-num" style="background:${meta.color}">${dn}</div><div class="lesson-info"><div class="lesson-date">${rec.date} 周${weekdayName(d)}${isToday?'<span style="color:#E65100;font-size:11px;margin-left:4px;font-weight:700;">今天</span>':''}${isParent?'<span class="lesson-tag tag-parent">亲子课</span>':''}${rec.manual?'<span class="lesson-tag tag-manual">📌手动</span>':''}${extraTags}</div><div class="lesson-time">${rec.time||''}</div></div><input class="note-input" placeholder="备注" value="${rec.note||''}" onchange="updateNote('${courseId}',${item.idx},this.value)" onfocus="this.placeholder=''" onblur="this.placeholder='备注'"/>${actionBtn}<button class="status-btn ${cls}" ${actualStatus==='pending'?'disabled style="cursor:default;opacity:0.6;"':''} onclick="toggleStatus('${courseId}',${item.idx})">${text}</button><button class="del-btn" onclick="deleteRecord('${courseId}',${item.idx})">✕</button></div>`;
+}
+
+function render(data){
+  if(!data.coursesMeta[activeCourse]) activeCourse=Object.keys(data.coursesMeta)[0];
+  renderToday(data);
+  renderCalendar(data);
+  renderOverview(data);
+  renderLegend(data);
+  renderTabs();
+  const tc=document.getElementById('tab-container');
+  tc.innerHTML='';
+  for(const id in data.coursesMeta){
+    const div=document.createElement('div');
+    div.id='tab-'+id;
+    div.className='tab-content'+(id===activeCourse?' active':'');
+    tc.appendChild(div);
+    renderTab(id, data, div);
+  }
+}
+
+// ============================================================
+// 交互
+// ============================================================
+let appData=null;
+let activeCourse='';
+function markUpdate(cid){ if(!appData.lastUpdate) appData.lastUpdate={}; appData.lastUpdate[cid]=new Date().toISOString(); }
+
+function toggleStatus(courseId, idx){
+  const record=appData.courses[courseId][idx];
+  const isParent=!!record.isParentClass;
+  const actual=getActualStatus(record);
+  if(actual==='pending') return;
+  const oldStatus=record.status==='pending'?'unrecorded':record.status;
+  const newStatus=cycleStatus(oldStatus,isParent);
+  if((oldStatus==='absent'||oldStatus==='reschedule'||oldStatus==='makeup')&&(newStatus!=='absent'&&newStatus!=='reschedule'&&newStatus!=='makeup')){
+    record.extraDate=''; record.extraTime=''; record.extraNote='';
+  }
+  appData.courses[courseId][idx].status=newStatus;
+  markUpdate(courseId); saveData(appData); render(appData);
+}
+function updateNote(courseId, idx, value){
+  appData.courses[courseId][idx].note=value;
+  markUpdate(courseId); saveData(appData); renderOverview(appData);
+}
+function switchTab(courseId){
+  activeCourse=courseId;
+  renderTabs();
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  const el=document.getElementById('tab-'+courseId); if(el) el.classList.add('active');
+}
+function toggleMonth(groupId, groupKey){
+  const g=document.getElementById(groupId); if(!g) return;
+  const arrow=g.querySelector('.month-arrow');
+  g.classList.toggle('collapsed');
+  if(arrow) arrow.classList.toggle('collapsed');
+  if(g.classList.contains('collapsed')) expandedMonths.delete(groupKey);
+  else expandedMonths.add(groupKey);
+}
+function togglePkg(blockId, key){
+  const g=document.getElementById(blockId); if(!g) return;
+  const arrow=g.querySelector('.pkg-subarrow');
+  g.classList.toggle('collapsed');
+  if(arrow) arrow.classList.toggle('collapsed');
+  if(g.classList.contains('collapsed')){ pkgExpanded.delete(key); pkgCollapsed.add(key); }
+  else { pkgCollapsed.delete(key); pkgExpanded.add(key); }
+}
+function scrollToToday(){
+  const active=document.querySelector('.tab-content.active'); if(!active) return;
+  const items=active.querySelectorAll('.lesson-item'); let found=false;
+  items.forEach(item=>{ if(!found){ const de=item.querySelector('.lesson-date'); if(de&&de.textContent.includes('今天')){item.scrollIntoView({behavior:'smooth',block:'center'});found=true;} } });
+  if(!found) items.forEach(item=>{ if(!found){ const btn=item.querySelector('.status-btn'); if(btn&&btn.textContent.includes('待记录')){item.scrollIntoView({behavior:'smooth',block:'center'});found=true;} } });
+  if(!found) alert('当前课程今天没有安排的课程~');
+}
+function toggleLock(){
+  const btn=document.getElementById('lock-btn');
+  const isLocked=document.body.classList.toggle('locked');
+  btn.classList.toggle('locked',isLocked);
+  btn.textContent=isLocked?'🔒 已锁定':'🔓 已解锁';
+  if(!isLocked) setTimeout(()=>{ if(!document.body.classList.contains('locked')) btn.textContent='🔒 锁定'; },1500);
+  appData.locked=isLocked; saveData(appData);
+}
+
+// 补课/调课弹窗
+let extraModalState={courseId:'',idx:-1,mode:'add'};
+function addExtra(courseId, idx){ extraModalState={courseId,idx,mode:'add'}; openExtraForm('add',appData.courses[courseId][idx].status); }
+function editExtra(courseId, idx){
+  extraModalState={courseId,idx,mode:'edit'};
+  const rec=appData.courses[courseId][idx];
+  document.getElementById('extra-date').value=rec.extraDate||'';
+  document.getElementById('extra-time-wrap').innerHTML=timeRangeHTML('extra-time', rec.extraTime||'');
+  document.getElementById('extra-note').value=rec.extraNote||'';
+  openExtraForm('edit',rec.status);
+}
+function openExtraForm(mode, status){
+  const title=document.getElementById('extra-modal-title'), confirmBtn=document.getElementById('extra-confirm-btn');
+  if(status==='reschedule'){ title.textContent=mode==='add'?'🔄 添加调课新时间':'🔄 修改调课新时间'; document.getElementById('extra-note').placeholder='如：原时间冲突，调至此时段'; }
+  else { title.textContent=mode==='add'?'📅 添加补课时间':'📅 修改补课时间'; document.getElementById('extra-note').placeholder='如：补请假那节课'; }
+  confirmBtn.textContent=mode==='add'?'确认添加':'保存修改';
+  confirmBtn.onclick=saveExtra;
+  if(mode==='add'){ document.getElementById('extra-date').value=today(); document.getElementById('extra-time-wrap').innerHTML=timeRangeHTML('extra-time', ''); document.getElementById('extra-note').value=''; }
+  document.getElementById('extra-modal').classList.add('show');
+}
+function closeExtraModal(){ document.getElementById('extra-modal').classList.remove('show'); }
+function saveExtra(){
+  const dv=document.getElementById('extra-date').value, tv=readTimeRangeVal('extra-time'), nv=document.getElementById('extra-note').value.trim();
+  if(!dv){alert('请选择日期');return;} if(!tv){alert('请填写时间');return;}
+  const {courseId,idx}=extraModalState, rec=appData.courses[courseId][idx];
+  rec.extraDate=dv; rec.extraTime=tv; rec.extraNote=nv;
+  markUpdate(courseId); saveData(appData); render(appData); closeExtraModal();
+}
+function deleteExtra(courseId, idx){
+  if(!confirm('确定清除这条补课/调课记录？')) return;
+  const rec=appData.courses[courseId][idx];
+  rec.extraDate=''; rec.extraTime=''; rec.extraNote='';
+  markUpdate(courseId); saveData(appData); render(appData);
+}
+// 删除某条课次：手动添加的直接移除；按计划生成的标记为已删除（重建时保留，记录区/日历/统计均忽略）
+function deleteRecord(courseId, idx){
+  const arr=appData.courses[courseId];
+  if(!arr || idx<0 || idx>=arr.length) return;
+  if(!confirm('确定删除这条记录？')) return;
+  const rec=arr[idx];
+  if(rec.manual){ arr.splice(idx,1); }
+  else { rec.deleted=true; }
+  syncAll(appData); saveData(appData); render(appData);
+}
+
+// 课时包管理
+function openPkgManage(courseId){
+  pfCourseId=courseId;
+  const meta=appData.coursesMeta[courseId];
+  const pkgs=appData.packages[courseId]||[];
+  const hp=(meta.hoursPerLesson)||1;
+  const courseRemLessons=Math.max(0, Math.round(calcStats(courseId, appData.courses[courseId]||[], appData).remaining/hp));
+  const locked=document.body.classList.contains('locked');
+  let html=`<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">${meta.emoji} ${meta.name} · 共 ${pkgs.length} 个课时包${locked?' · 🔒 只读':''}</div>`;
+  if(pkgs.length===0) html+=`<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">${locked?'暂无课时包。':'暂无课时包，点击下方添加并设置上课时间。'}</div>`;
+  pkgs.forEach((p,i)=>{
+    const ps=pkgStats(courseId, p.id, appData);
+    const isContainer=(parseInt(p.lessons,10)||0)===0;
+    const remText = isContainer ? `🔗 共享剩余 ${courseRemLessons} 节` : `剩 ${ps.remaining} 节`;
+    const acts = locked ? '' : `<div class="pkg-item-acts">
+      <button class="edit-btn" onclick="openPkgForm('edit','${courseId}','${p.id}')">✎</button>
+      <button class="del-btn" onclick="deletePkg('${courseId}','${p.id}')">✕</button>
+      </div>`;
+    html+=`<div class="pkg-item${isContainer?' container':''}"><div class="pkg-item-main">
+      <div class="pkg-item-name">📦 ${p.name||('课时包'+(i+1))}${isContainer?' <span class="pkg-tag-shared">共享</span>':''}</div>
+      <div class="pkg-item-sub">${p.lessons}节 · ${wdText(p.weekdays)} · ${pkgTimeText(p)} · 始于${p.startDate}${p.lastDay?(' · 止于'+p.lastDay):''} · ${remText}</div>
+      </div>${acts}</div>`;
+  });
+  document.getElementById('pm-list').innerHTML=html;
+  document.getElementById('pm-title').textContent = locked ? '📦 课时包（只读）' : '📦 课时包管理';
+  document.getElementById('pm-add-btn').style.display = locked ? 'none' : '';
+  document.getElementById('pkg-manage-modal').classList.add('show');
+}
+function closePkgManage(){ document.getElementById('pkg-manage-modal').classList.remove('show'); }
+
+// 课时包 添加/编辑
+let pfCourseId='', pfEditId='', pfWeekdays=[], pfTimes={};
+function openPkgForm(mode, courseId, pkgId){
+  if(courseId) pfCourseId=courseId; pfEditId = mode==='edit'?pkgId:'';
+  const title=document.getElementById('pf-title');
+  const meta=appData.coursesMeta[pfCourseId];
+  document.getElementById('pf-course-hint').textContent = meta.emoji+' '+meta.name;
+  if(mode==='edit'){
+    const pkg=appData.packages[courseId].find(p=>p.id===pkgId);
+    title.textContent='✏️ 编辑课时包';
+    document.getElementById('pf-name').value=pkg.name||'';
+    document.getElementById('pf-lessons').value=pkg.lessons||'';
+    document.getElementById('pf-start').value=pkg.startDate||'';
+    document.getElementById('pf-last').value=pkg.lastDay||'';
+    pfWeekdays=(pkg.weekdays||[]).slice();
+    pfTimes={};
+    if(pkg.times) for(const k in pkg.times) pfTimes[k]=pkg.times[k];
+    else if(pkg.time) pfWeekdays.forEach(w=>pfTimes[w]=pkg.time);
+  } else {
+    title.textContent='➕ 添加课时包';
+    document.getElementById('pf-name').value='';
+    document.getElementById('pf-lessons').value='';
+    document.getElementById('pf-start').value=today();
+    document.getElementById('pf-last').value='';
+    pfWeekdays=[]; pfTimes={};
+  }
+  renderPkgWeekdays();
+  document.getElementById('pkg-form-modal').classList.add('show');
+}
+function renderPkgWeekdays(){
+  const wrap=document.getElementById('pf-weekdays');
+  let html='';
+  for(let w=0;w<7;w++){
+    const on=pfWeekdays.includes(w);
+    html+=`<button type="button" class="wd-btn ${on?'on':''}" onclick="toggleWd(${w})">${WD_NAME[w]}</button>`;
+  }
+  wrap.innerHTML=html;
+  renderPkgTimes();
+}
+function toggleWd(w){
+  const i=pfWeekdays.indexOf(w);
+  if(i>=0) pfWeekdays.splice(i,1); else pfWeekdays.push(w);
+  pfWeekdays.sort((a,b)=>a-b);
+  renderPkgWeekdays();
+}
+function renderPkgTimes(){
+  const wrap=document.getElementById('pf-times');
+  if(pfWeekdays.length===0){ wrap.innerHTML='<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">请先选择上课星期</div>'; return; }
+  let html='';
+  pfWeekdays.forEach(w=>{
+    const v=(pfTimes[w]!==undefined)?pfTimes[w]:'';
+    html+=`<label>周${WD_NAME[w]} 时间</label>`+timeRangeHTML('pf-time-'+w, v);
+  });
+  wrap.innerHTML=html;
+}
+function closePkgForm(){ document.getElementById('pkg-form-modal').classList.remove('show'); }
+function savePkgForm(){
+  const name=document.getElementById('pf-name').value.trim();
+  const lessons=parseInt(document.getElementById('pf-lessons').value,10);
+  const start=document.getElementById('pf-start').value;
+  const last=document.getElementById('pf-last').value;
+  if(isNaN(lessons)||lessons<0){ alert('请输入有效的课节数（可为0：仅作不同时间的上课容器，不计入总剩余课时）'); return; }
+  if(!start){ alert('请选择开始日期'); return; }
+  if(pfWeekdays.length===0){ alert('请选择上课星期'); return; }
+  const times={};
+  let ok=true;
+  pfWeekdays.forEach(w=>{ const tv=readTimeRangeVal('pf-time-'+w); times[w]=tv; if(!tv) ok=false; });
+  if(!ok){ alert('请填写所选星期的时间'); return; }
+  const list=appData.packages[pfCourseId];
+  if(pfEditId){
+    const idx=list.findIndex(p=>p.id===pfEditId);
+    const old=list[idx];
+    list[idx]={ id:pfEditId, name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, addedAt:old.addedAt };
+  } else {
+    list.push({ id:'p'+Date.now(), name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, addedAt:new Date().toISOString() });
+  }
+  syncAll(appData);
+  saveData(appData);
+  closePkgForm();
+  render(appData);
+  openPkgManage(pfCourseId);
+}
+function deletePkg(courseId, pkgId){
+  if(!confirm('删除该课时包将清除其下所有课次及已记录状态，确定？')) return;
+  appData.packages[courseId]=appData.packages[courseId].filter(p=>p.id!==pkgId);
+  syncAll(appData); saveData(appData);
+  openPkgManage(courseId); render(appData);
+}
+
+// 添加上课（非固定日期）
+let acModalState={courseId:''};
+function openAddClass(courseId){
+  acModalState={courseId};
+  const meta=appData.coursesMeta[courseId];
+  document.getElementById('ac-course-name').textContent=`${meta.emoji} ${meta.name}`;
+  const sel=document.getElementById('ac-pkg');
+  const pkgs=(appData.packages[courseId]||[]);
+  if(pkgs.length===0){
+    sel.innerHTML='<option value="">（该课程暂无课时包，请先添加）</option>';
+    sel.disabled=true;
+  } else {
+    sel.disabled=false;
+    sel.innerHTML=pkgs.map(p=>`<option value="${p.id}">${p.name||'课时包'}</option>`).join('');
+  }
+  document.getElementById('ac-date').value=today();
+  const firstPkg=pkgs[0];
+  document.getElementById('ac-time-wrap').innerHTML=timeRangeHTML('ac-time', firstPkg?(firstPkg.time||''):'');
+  document.getElementById('ac-note').value='';
+  document.getElementById('ac-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('ac-date').focus(),50);
+}
+function closeAddClassModal(){ document.getElementById('ac-modal').classList.remove('show'); }
+function saveAddClass(){
+  const dv=document.getElementById('ac-date').value;
+  const tv=readTimeRangeVal('ac-time');
+  const nv=document.getElementById('ac-note').value.trim();
+  if(!dv){ alert('请选择上课日期'); return; }
+  const cid=acModalState.courseId;
+  const sel=document.getElementById('ac-pkg');
+  const pkgId=sel.disabled?'':sel.value;
+  if(!pkgId){ alert('请先为课程添加课时包后再添加上课'); return; }
+  const rec={date:dv, status:'pending', note:nv, extraDate:'', extraTime:'', extraNote:'', time:tv, pkgId:pkgId, manual:true};
+  appData.courses[cid].push(rec);
+  appData.courses[cid].sort(cmpRecords);
+  markUpdate(cid); saveData(appData); render(appData); closeAddClassModal();
+}
+
+// 课程 添加/编辑
+let cfEditId='', cfEmoji='✏️';
+function openCourseForm(mode, courseId){
+  const title=document.getElementById('cf-title');
+  const dwrap=document.getElementById('cf-delete-wrap');
+  if(mode==='edit'){
+    cfEditId=courseId;
+    const m=appData.coursesMeta[courseId];
+    title.textContent='⚙️ 编辑课程';
+    document.getElementById('cf-name').value=m.name||'';
+    document.getElementById('cf-hours').value=m.hoursPerLesson||1;
+    cfEmoji=m.emoji||'✏️';
+    dwrap.innerHTML=`<button class="toolbar-btn danger" style="width:100%" onclick="deleteCourse('${courseId}')">🗑️ 删除该课程</button>`;
+  } else {
+    cfEditId='';
+    title.textContent='➕ 添加课程';
+    document.getElementById('cf-name').value='';
+    document.getElementById('cf-hours').value=1;
+    cfEmoji='✏️';
+    dwrap.innerHTML='';
+  }
+  renderEmojiPicker();
+  document.getElementById('course-modal').classList.add('show');
+}
+function renderEmojiPicker(){
+  document.getElementById('cf-emoji').innerHTML=EMOJI_PALETTE.map(e=>`<button type="button" class="emoji-btn ${e===cfEmoji?'on':''}" onclick="pickEmoji('${e}')">${e}</button>`).join('');
+}
+function pickEmoji(e){ cfEmoji=e; renderEmojiPicker(); }
+function closeCourseForm(){ document.getElementById('course-modal').classList.remove('show'); }
+function nextColor(){
+  const used=Object.values(appData.coursesMeta).map(m=>m.color);
+  return COLOR_PALETTE.find(c=>!used.includes(c)) || COLOR_PALETTE[Object.keys(appData.coursesMeta).length % COLOR_PALETTE.length];
+}
+function saveCourseForm(){
+  const name=document.getElementById('cf-name').value.trim();
+  const hours=parseInt(document.getElementById('cf-hours').value,10);
+  if(!name){ alert('请输入课程名称'); return; }
+  if(!hours||hours<=0){ alert('请输入每节课课时数'); return; }
+  if(cfEditId){
+    const m=appData.coursesMeta[cfEditId];
+    m.name=name; m.emoji=cfEmoji; m.hoursPerLesson=hours;
+  } else {
+    const id='c'+Date.now();
+    appData.coursesMeta[id]={id,name,emoji:cfEmoji,color:nextColor(),hoursPerLesson:hours};
+    appData.packages[id]=[]; appData.courses[id]=[]; appData.lastUpdate[id]='';
+    activeCourse=id;
+  }
+  saveData(appData); render(appData); closeCourseForm();
+}
+function deleteCourse(courseId){
+  if(!confirm('确定删除该课程？其课时包与所有记录将一并清除，无法恢复！')) return;
+  delete appData.coursesMeta[courseId];
+  delete appData.packages[courseId];
+  delete appData.courses[courseId];
+  if(appData.lastUpdate) delete appData.lastUpdate[courseId];
+  if(activeCourse===courseId) activeCourse=Object.keys(appData.coursesMeta)[0]||'';
+  saveData(appData); render(appData); closeCourseForm();
+}
+
+function confirmReset(){
+  if(confirm('⚠️ 确认重置所有课程记录？所有课程、课时包与状态将清除，无法恢复！')){
+    localStorage.removeItem(STORAGE_KEY);
+    appData=initData(); saveData(appData); activeCourse=Object.keys(appData.coursesMeta)[0]; render(appData);
+    alert('✅ 已重置！');
+  }
+}
+
+// ============================================================
+// 数据迁移 / 备份 / 导入
+// ============================================================
+function migrateData(data){
+  // 迁移：旧版本课程定义写死在常量里，这里搬进用户数据
+  if(!data.coursesMeta){
+    data.coursesMeta={};
+    for(const [id,cfg] of Object.entries(DEFAULT_COURSES)){
+      data.coursesMeta[id]={ id, name:cfg.name, emoji:cfg.emoji, color:cfg.color, hoursPerLesson:cfg.hoursPerLesson };
+      if(cfg.parentClassIndex!==undefined) data.coursesMeta[id].parentClassIndex=cfg.parentClassIndex;
+    }
+    for(const [id,cfg] of Object.entries(DEFAULT_COURSES)){
+      if(data.packages && data.packages[id]){
+        data.packages[id].forEach(p=>{
+          if(!p.weekdays) p.weekdays = cfg.weekdays ? cfg.weekdays.slice() : [2];
+          if(p.time===undefined) p.time = cfg.time||'';
+          if(p.times===undefined) p.times = cfg.times?Object.assign({},cfg.times):null;
+          if(!p.startDate) p.startDate = cfg.startDate;
+        });
+      }
+    }
+  }
+  // 旧记录补字段
+  for(const cid in data.courses){
+    (data.courses[cid]||[]).forEach(r=>{
+      if(r.extraDate===undefined) r.extraDate='';
+      if(r.extraTime===undefined) r.extraTime='';
+      if(r.extraNote===undefined) r.extraNote='';
+      if(r.time===undefined) r.time='';
+      if(r.manual===undefined) r.manual=false;
+      if(r.pkgId===undefined) r.pkgId='';
+    });
+    data.courses[cid].sort(cmpRecords);
+  }
+  if(!data.lastUpdate) data.lastUpdate={};
+  for(const id in data.coursesMeta){ if(data.lastUpdate[id]===undefined) data.lastUpdate[id]=''; }
+  // 按课时包重建（保留已记录状态 + 手动课）
+  syncAll(data);
+  return data;
+}
+
+// 自包含备份：把数据内嵌进 HTML 文件的隐藏节点，换路径/换设备直接双击打开即可，无需再导入
+function exportSelfContained(){
+  const ts=new Date();
+  const fname='课时追踪器-自包含备份-'+ts.getFullYear()+String(ts.getMonth()+1).padStart(2,'0')+String(ts.getDate()).padStart(2,'0')+'.html';
+  // 先移除已存在的自包含数据节点，避免 outerHTML 重复包含/解析干扰
+  const emb=document.getElementById('embedded-backup');
+  let embParent=null, embNext=null;
+  if(emb){ embParent=emb.parentNode; embNext=emb.nextSibling; emb.remove(); }
+  let html=document.documentElement.outerHTML;
+  if(emb && embParent){ embParent.insertBefore(emb, embNext); }
+  // 用 Unicode 转义 < > & ，确保内嵌数据不会触发 HTML 解析（尤其不会提前闭合主脚本）
+  const json=JSON.stringify(appData).replace(/&/g,'\\u0026').replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+  const inj='\n<div id="embedded-backup" hidden>'+json+'</div>\n';
+  // 必须插到真正的 </body> 之前（用最后一个匹配，避免误伤源码里的字符串字面量 '</body>'）
+  const bi=html.lastIndexOf('</body>');
+  if(bi>=0) html=html.slice(0,bi)+inj+html.slice(bi);
+  else html+=inj;
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  alert('✅ 已导出【自包含备份】'+fname+'：数据已内嵌在文件里，换电脑/换路径直接双击打开即可，无需再导入。');
+  clearDirty();
+}
+
+// JSON 导出/导入：用于跨网址/跨设备迁移数据，数据只在本机，不上传任何服务器
+function exportData(){
+  const ts=new Date();
+  const fname='课时追踪器-数据-'+ts.getFullYear()+String(ts.getMonth()+1).padStart(2,'0')+String(ts.getDate()).padStart(2,'0')+'.json';
+  const blob=new Blob([JSON.stringify(appData,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  alert('✅ 已导出数据文件 '+fname+'（仅数据，不含程序）。保存在手机本地即可，换网址/换手机时用「📂 导入」恢复，数据不会上传任何服务器。');
+}
+function importData(input){
+  const file=input.files && input.files[0];
+  if(!file){ return; }
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data || !data.coursesMeta || !data.packages){ alert('❌ 文件格式不正确，不是有效的课时追踪器数据文件。'); return; }
+      if(!confirm('导入将覆盖当前所有课程与课时记录，确定继续？\n（建议先点「💾 导出」备份当前数据）')){ input.value=''; return; }
+      appData=data; if(!appData.locked) appData.locked=false;
+      saveData(appData); render(appData); clearDirty();
+      alert('✅ 导入成功，数据已恢复。');
+    }catch(err){ alert('❌ 解析失败：'+err.message); }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// 初始化
+// ============================================================
+(function init(){
+  function start(){
+    let stored=loadData();
+    let data=stored;
+    if(!data){
+      // 本路径无存储：尝试读取文件内嵌的自包含备份（此时 DOM 已解析完毕，div 可用）
+      const emb=document.getElementById('embedded-backup');
+      if(emb){ try{ data=JSON.parse(emb.textContent); }catch(e){ data=null; } }
+      if(!data){ data=initData(); }
+      saveData(data);
+    } else { data=migrateData(data); }
+    appData=data;
+    if(!appData.coursesMeta[activeCourse]) activeCourse=Object.keys(appData.coursesMeta)[0]||'';
+    render(data);
+    if(data.locked){
+      document.body.classList.add('locked');
+      const btn=document.getElementById('lock-btn');
+      if(btn){ btn.classList.add('locked'); btn.textContent='🔒 已锁定'; }
+    }
+    // 本路径原本没有任何数据（很可能是在新位置/新浏览器打开）→ 自动展开数据恢复提示
+    if(!stored){
+      const rb=document.getElementById('rn-body'); const rt=document.getElementById('rn-toggle');
+      if(rb&&rt){ rb.style.display='block'; rt.textContent='收起 ▴'; }
+    }
+    clearDirty(); // 初始加载（含从自包含备份恢复）不算"未备份改动"
+  }
+  // 延迟到 DOM 解析完成再启动，确保文件内嵌的自包含备份节点（位于脚本之后）已可用
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+</body>
+</html>
