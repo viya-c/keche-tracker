@@ -119,6 +119,25 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 .status-holiday{background:#F3EEFF;color:#7C3AED;}
 .status-pending{background:#F0F0F0;color:#999;}
 .status-unrecorded{background:#FFF8E6;color:#B7791F;cursor:pointer;}
+/* 点击日历当天的记录弹窗 */
+.day-modal-list{max-height:52vh;overflow-y:auto;margin:4px 0;}
+.day-rec{border-left:3px solid #ccc;border-radius:8px;background:var(--bg);padding:10px 12px;margin-bottom:10px;}
+.day-rec-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px;font-weight:600;}
+.day-emoji{font-size:15px;}
+.day-name{font-weight:700;}
+.day-extra{font-size:11px;color:#1078A8;background:#E3F4FD;padding:1px 6px;border-radius:6px;}
+.day-status{margin-left:auto;font-size:12px;padding:2px 8px;border-radius:8px;font-weight:600;}
+.day-time{font-size:13px;color:var(--text-muted);margin-top:4px;}
+.day-note{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.day-empty{font-size:13px;color:var(--text-muted);text-align:center;padding:20px 0;line-height:1.6;}
+.day-tap{font-size:11px;color:#667eea;margin-top:6px;opacity:.85;}
+.rec-sub{font-size:13px;color:var(--text-muted);margin:-4px 0 10px;}
+.rec-label{display:block;font-size:12px;color:var(--text-muted);margin:12px 0 4px;}
+.rec-status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.rec-status-grid button{padding:11px 6px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .12s;}
+.rec-status-grid button.on{box-shadow:0 0 0 2px #667eea inset;color:#667eea;background:#F4F6FF;}
+.rec-note{width:100%;min-height:52px;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);box-sizing:border-box;outline:none;}
+.rec-note:focus{border-color:#667eea;}
 .status-btn:hover:not([data-status="pending"]){filter:brightness(0.92);}
 .note-input{border:1px dashed var(--border);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--text-muted);width:90px;outline:none;background:transparent;font-family:inherit;}
 .note-input:focus{border-color:#aaa;background:#fafafa;}
@@ -161,6 +180,8 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 /* 弹窗 */
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:100;justify-content:center;align-items:center;}
 .modal-overlay.show{display:flex;}
+/* 子弹窗（补课/调课、添加上课、课时包）层级高于当天弹窗/记录编辑器，避免遮罩盖住按钮 */
+#extra-modal,#ac-modal,#pkg-manage-modal,#pkg-form-modal{z-index:300;}
 .modal-box{background:var(--card);border-radius:var(--radius);padding:24px;width:360px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-height:88vh;overflow-y:auto;}
 .modal-box h3{font-size:16px;margin-bottom:16px;}
 .modal-box label{font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px;}
@@ -170,6 +191,27 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 .modal-btn{padding:8px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
 .modal-btn.primary{background:#667eea;color:white;}
 .modal-btn.cancel{background:var(--border);color:var(--text-muted);}
+/* 顶部主功能 Tab */
+.main-tabs{display:flex;gap:8px;margin:4px 0 8px;}
+.sync-status{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;margin:0 0 12px;display:inline-block;cursor:pointer;user-select:none;background:#F0F0F0;color:#888;transition:all .15s;}
+.sync-status.syncing{background:#E3F4FD;color:#1078A8;}
+.sync-status.ok{background:#E8F8EF;color:#1E9E5A;}
+.sync-status.offline{background:#FFF8E6;color:#B7791F;}
+.sync-status.error{background:#FDECEA;color:#D6453D;}
+.mtab{flex:1;padding:11px 4px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.mtab.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(102,126,234,0.35);}
+/* 历史搜索 */
+.search-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;background:var(--card);color:var(--text);box-sizing:border-box;}
+.search-input:focus{border-color:#667eea;}
+/* 近期安排：今天/周/月 切换 */
+.range-switch{display:flex;gap:6px;margin:10px 0 4px;}
+.range-switch button{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:9px;background:var(--card);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;}
+.range-switch button.on{background:#667eea;color:#fff;border-color:transparent;}
+/* agenda：按天分组的近期安排 */
+.agenda-day{border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px;background:var(--card);cursor:pointer;}
+.agenda-day:hover{border-color:#667eea;}
+.ad-head{font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:6px;}
+.ad-head .ad-today{color:#28C76F;margin-left:4px;}
 .wd-picker{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .wd-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;color:var(--text-muted);}
 .wd-btn.on{background:#667eea;color:#fff;border-color:#667eea;}
@@ -275,11 +317,25 @@ body.dirty .backup-warn{display:block;}
 </div>
 <div class="backup-warn" id="backup-warn">⚠️ 有改动尚未备份！点工具栏 <b>📦 自包含备份</b> 把数据存进文件，换手机 / 换路径都不会丢。</div>
 <div class="container">
-  <div class="today-box" id="today-box"></div>
-  <div class="calendar-box" id="calendar-box"></div>
-  <div class="overview" id="overview"></div>
-  <div class="legend" id="legend"></div>
-  <div class="tabs" id="tabs"></div>
+  <div class="main-tabs" id="main-tabs">
+    <button class="mtab active" data-view="upcoming" onclick="switchMainView('upcoming')">📅 近期安排</button>
+    <button class="mtab" data-view="manage" onclick="switchMainView('manage')">📊 课时管理</button>
+    <button class="mtab" data-view="history" onclick="switchMainView('history')">📜 历史记录</button>
+  </div>
+  <div id="sync-status" class="sync-status" onclick="forceSync()" title="点击立即同步">🟡 未同步</div>
+  <div id="view-upcoming">
+    <div class="today-box" id="today-box"></div>
+    <div class="calendar-box" id="calendar-box"></div>
+  </div>
+  <div id="view-manage" style="display:none">
+    <div class="overview" id="overview"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div id="view-history" style="display:none">
+    <input id="history-search" class="search-input" placeholder="🔍 搜索课程 / 备注 / 状态…" oninput="filterHistory(this.value)" />
+    <div class="tabs" id="tabs"></div>
+    <div id="tab-container"></div>
+  </div>
   <div class="toolbar">
     <button class="toolbar-btn" id="lock-btn" onclick="toggleLock()">🔒 锁定</button>
     <button class="toolbar-btn" onclick="scrollToToday()">📅 跳转今天</button>
@@ -290,7 +346,6 @@ body.dirty .backup-warn{display:block;}
     <button class="toolbar-btn danger" onclick="confirmReset()">🔄 重置数据</button>
     <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(this)">
   </div>
-  <div id="tab-container"></div>
 </div>
 
 <!-- 补课/调课弹窗 -->
@@ -382,6 +437,33 @@ body.dirty .backup-warn{display:block;}
       <button class="modal-btn primary" onclick="saveCourseForm()">保存</button>
     </div>
     <div id="cf-delete-wrap" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="day-modal">
+  <div class="modal-box">
+    <h3 id="day-modal-title"></h3>
+    <div id="day-modal-list" class="day-modal-list"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeDayModal()">关闭</button>
+      <button class="modal-btn primary" id="day-add-btn" onclick="dayAddClass()">➕ 添加当天上课</button>
+    </div>
+  </div>
+</div>
+
+<!-- 上课记录编辑器：点日历某天课程直接记录 -->
+<div class="modal-overlay" id="record-modal">
+  <div class="modal-box">
+    <h3 id="rec-modal-title">📝 上课记录</h3>
+    <div id="rec-modal-sub" class="rec-sub"></div>
+    <div id="rec-status-grid" class="rec-status-grid"></div>
+    <label class="rec-label">📝 备注</label>
+    <textarea id="rec-note" class="rec-note" placeholder="备注…" onchange="recSaveNote()"></textarea>
+    <div id="rec-extra-actions"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="modal-btn cancel" onclick="closeRecordModal()">关闭</button>
+      <button class="modal-btn danger" onclick="recDeleteFromModal()">🗑️ 删除</button>
+    </div>
   </div>
 </div>
 
@@ -492,7 +574,109 @@ let _dirty=false; // 是否有未备份的改动（用于"未备份提醒"）
 function markDirty(){ _dirty=true; try{ document.body.classList.add('dirty'); }catch(e){} }
 function clearDirty(){ _dirty=false; try{ document.body.classList.remove('dirty'); }catch(e){} }
 function loadData(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); }catch(e){} return null; }
-function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); markDirty(); }
+function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); markDirty(); if(!_suppressSync) syncSave(); }
+
+// ============================================================
+// 家庭共享同步（GitHub 仓库内的 data.json 作为唯一数据源，轮询近实时）
+// 说明：仅此仓库、Contents 读写权限的细粒度 token 会被写进页面，
+//      任何人打开页面理论上可提取该 token，但仅限这一仓库，可随时撤销。
+// ============================================================
+const SYNC = {
+  enabled: true,
+  owner: 'viya-c',
+  repo: 'keche-tracker',
+  path: 'data.json',
+  token: '',            // 部署时填入（细粒度 token，仅此仓库）
+  interval: 20000,      // 轮询间隔(ms)
+  branch: null,         // 自动探测默认分支
+};
+let _suppressSync=false;   // 从远端载入时不触发回写，避免循环
+let _syncSha=null;         // 远端 data.json 当前 sha
+let _syncBusy=false;
+let _syncTimer=null;
+let _syncSaveTimer=null;
+let _syncLast=0;           // 上次成功同步时间戳
+
+function b64enc(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64dec(b64){ return decodeURIComponent(escape(atob(b64))); }
+function ghHeaders(){ return {'Authorization':'token '+SYNC.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
+async function ghBranch(){
+  if(SYNC.branch) return SYNC.branch;
+  const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}`,{headers:ghHeaders()});
+  if(!r.ok) throw new Error('repo '+r.status);
+  const j=await r.json(); SYNC.branch=j.default_branch||'main'; return SYNC.branch;
+}
+async function ghGet(){
+  const b=await ghBranch();
+  const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.path}?ref=${b}`,{headers:ghHeaders()});
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error('get '+r.status);
+  const j=await r.json(); return {sha:j.sha, data:JSON.parse(b64dec(j.content))};
+}
+async function ghPut(data, sha){
+  const b=await ghBranch();
+  const body={message:'课时追踪器 同步 '+new Date().toISOString(), content:b64enc(JSON.stringify(data)), branch:b};
+  if(sha) body.sha=sha;
+  const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.path}`,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
+  if(r.status===409) throw {conflict:true};
+  if(!r.ok) throw new Error('put '+r.status);
+  const j=await r.json(); return j.content.sha;
+}
+function setSyncStatus(s){
+  const el=document.getElementById('sync-status'); if(!el) return;
+  const map={syncing:['🔄','同步中…'],ok:['🟢','已同步 '+fmtSyncTime(_syncLast)],offline:['🟡','离线·仅本地'],error:['🔴','同步失败']};
+  const m=map[s]||map.offline; el.textContent=m[0]+' '+m[1]; el.className='sync-status '+s;
+}
+function fmtSyncTime(ts){ if(!ts) return ''; const d=new Date(ts), p=n=>String(n).padStart(2,'0'); return p(d.getHours())+':'+p(d.getMinutes()); }
+async function pushLocal(){
+  let sha=_syncSha;
+  if(!sha){ const cur=await ghGet(); sha=cur?cur.sha:null; _syncSha=sha; if(!cur){ _syncSha=await ghPut(appData,null); return; } }
+  _syncSha=await ghPut(appData, sha);
+}
+function syncSave(){
+  if(!SYNC.enabled || !SYNC.token) return;
+  if(_syncSaveTimer) clearTimeout(_syncSaveTimer);
+  _syncSaveTimer=setTimeout(async ()=>{
+    if(_syncBusy) return; _syncBusy=true; setSyncStatus('syncing');
+    try{ await pushLocal(); setSyncStatus('ok'); _syncLast=Date.now(); }
+    catch(e){
+      if(e&&e.conflict){ try{ const cur=await ghGet(); _syncSha=cur?cur.sha:null; _syncSha=await ghPut(appData,_syncSha); setSyncStatus('ok'); _syncLast=Date.now(); }
+        catch(e2){ setSyncStatus('error'); } }
+      else setSyncStatus('error');
+    } finally{ _syncBusy=false; }
+  }, 400);
+}
+async function applyRemote(){
+  const cur=await ghGet();
+  if(!cur) return false;
+  _syncSha=cur.sha;
+  let rd=cur.data; if(!rd||!rd.coursesMeta) rd=initData();
+  if(!rd.coursesMeta[activeCourse]) activeCourse=Object.keys(rd.coursesMeta)[0]||'';
+  _suppressSync=true; appData=rd; saveData(appData); render(appData); _suppressSync=false;
+  setSyncStatus('ok'); _syncLast=Date.now(); return true;
+}
+async function syncLoad(){
+  if(!SYNC.enabled || !SYNC.token) return;
+  setSyncStatus('syncing');
+  try{ if(!(await applyRemote())){ _syncSha=await ghPut(appData,null); setSyncStatus('ok'); _syncLast=Date.now(); } }
+  catch(e){ setSyncStatus('offline'); }
+}
+function startSyncPoll(){
+  if(!SYNC.enabled || !SYNC.token) return;
+  syncLoad();
+  if(_syncTimer) clearInterval(_syncTimer);
+  _syncTimer=setInterval(async ()=>{
+    if(_syncBusy) return;
+    try{
+      const b=await ghBranch();
+      const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.path}?ref=${b}`,{headers:ghHeaders()});
+      if(r.status===404) return; if(!r.ok) return;
+      const j=await r.json();
+      if(j.sha!==_syncSha){ await applyRemote(); }
+    }catch(e){ /* 轮询容错：忽略瞬时错误 */ }
+  }, SYNC.interval);
+}
+function forceSync(){ if(SYNC.enabled&&SYNC.token) syncLoad(); }
 // 判断是否仍是初始种子数据（用户尚未自建课时包 / 手动课）
 function isFreshSeed(data){
   const cids=Object.keys((data&&data.coursesMeta)||{});
@@ -644,6 +828,10 @@ function getActualStatus(record){
 // ============================================================
 let calYear, calMonth, calSelDate;
 let calCollapsed=true;   // 月视图日历默认收起，首屏突出"今日课程"
+let calClassMap={};     // 当前月每天的记录（含完整 record），供点击弹窗复用
+let dayModalDate='';    // 当天弹窗当前选中的日期
+let mainView='upcoming'; // 主功能视图：upcoming / manage / history
+let upRange='today';     // 近期安排范围：today / week / month
 // 相对日期标签（今天/昨天/明天/周X）
 function relDay(ds){
   if(!ds) return '';
@@ -671,79 +859,87 @@ function fmtTimeRange(timeStr){ if(!timeStr) return '—'; return timeStr.replac
 function pkgNameOf(pk){ return pk && pk.name ? pk.name : '课时包'; }
 
 // ===== 今日课程提醒模块 =====
-function renderToday(data){
+// 近期安排：按 今天/本周 范围，汇总所有课程课次，按天分组展示
+function renderUpcoming(data){
   const el=document.getElementById('today-box');
   const t=today();
-  const items=[];
+  let start,end,title;
+  if(upRange==='today'){ start=t; end=t; title='今日课程'; }
+  else { // 本周
+    const d=parseDate(t), dow=d.getDay();
+    const mon=new Date(d); mon.setDate(d.getDate()-(dow===0?6:dow-1));
+    const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+    start=formatDate(mon); end=formatDate(sun); title='本周安排';
+  }
+  // 收集范围内课次，按日期分组
+  const groups={};
   for(const [id,meta] of Object.entries(data.coursesMeta)){
-    const pkgs=data.packages[id]||[];
-    const firstId=pkgs.length?pkgs[0].id:'';
+    const pkgs=data.packages[id]||[]; const firstId=pkgs.length?pkgs[0].id:'';
     (data.courses[id]||[]).forEach(r=>{
       if(r.deleted) return;
       const pk=pkgs.find(p=>p.id===(r.pkgId||firstId));
-      const expired = pk && pk.lastDay ? (d)=> d>pk.lastDay : null;
-      const baseTime=()=> r.time || (pk?pkgTimeFor(pk,t):'') || meta.time || '';
-      if(r.date===t){
-        if(expired && expired(t)) return;   // 与日历一致：跳过已过有效期的课
-        items.push({cid:id,meta,time:baseTime(),pkgName:pkgNameOf(pk),status:r.status,isParent:!!r.isParentClass,key:'d'+r.idx});
-      }
-      if(r.extraDate===t && (r.status==='absent'||r.status==='reschedule'||r.status==='makeup')){
-        if(expired && expired(t)) return;
+      const expired=pk&&pk.lastDay?(dd)=>dd>pk.lastDay:null;
+      const baseTime=()=> r.time || (pk?pkgTimeFor(pk,parseDate(r.date||t)):'') || meta.time || '';
+      const add=(date,time,status,isParent,extraLabel)=>{
+        if(!date || date<start || date>end) return;
+        if(expired && expired(date)) return;
+        if(!groups[date]) groups[date]=[];
+        groups[date].push({cid:id,meta,time,status,isParent,extraLabel});
+      };
+      if(r.date) add(r.date, baseTime(), r.status, !!r.isParentClass, null);
+      if(r.extraDate && (r.status==='absent'||r.status==='reschedule'||r.status==='makeup')){
         const time=r.extraTime||r.time||meta.time||'';
-        const label=r.status==='reschedule'?'🔄 调到今日':'📅 补到今日';
-        items.push({cid:id,meta,time,pkgName:pkgNameOf(pk),status:r.status,isParent:false,extraLabel:label,key:'e'+r.idx});
+        const label=r.status==='reschedule'?'🔄 调课':'📅 补课';
+        add(r.extraDate, time, r.status, false, label);
       }
     });
   }
-  items.sort((a,b)=>timeRangeStart(a.time)-timeRangeStart(b.time));
-  const wd=WD_NAME[parseDate(t).getDay()];
-  let html=`<div class="today-head"><div class="th-title">📌 今日课程 · ${wd}</div><div class="th-date">${t}</div></div>`;
-  if(items.length===0){
-    html+=`<div class="today-empty">🎉 今天没有排课，好好休息~</div>`;
+  const dates=Object.keys(groups).sort();
+  let html=`<div class="today-head"><div class="th-title">📅 ${title}</div><div class="th-date">${start}${upRange!=='today'?' ~ '+end:''}</div></div>`;
+  html+=`<div class="range-switch"><button class="${upRange==='today'?'on':''}" onclick="setUpRange('today')">今天</button><button class="${upRange==='week'?'on':''}" onclick="setUpRange('week')">本周</button></div>`;
+  if(dates.length===0){
+    html+=`<div class="today-empty">🎉 这段时间没有排课，好好休息~</div>`;
   } else {
-    const now=new Date();
-    html+='<div class="today-list">';
-    items.forEach(it=>{
-      const sl=getStatusLabel(it.status,it.isParent);
-      let state='', tag='';
-      const se=parseTimeRange(it.time,t);
-      if(se.start && se.end){
-        if(now>se.end){ state='done'; tag='<span class="tv done">已结束</span>'; }
-        else if(now>=se.start){ state='now'; tag='<span class="tv now">进行中</span>'; }
-      }
-      const extra=it.extraLabel?`<span style="color:#1078A8">${it.extraLabel}</span> · `:'';
-      const sub=`<div class="today-sub">${extra}${it.pkgName} · <span class="${sl.cls}">${sl.text}</span></div>`;
-      const pendCls = it.status==='pending' ? ' pending' : '';
-      html+=`<div class="today-item ${state}${pendCls}" onclick="switchTab('${it.cid}')">
-        <div class="today-emoji">${it.meta.emoji}</div>
-        <div class="today-main"><div class="today-name">${it.meta.name}</div>${sub}</div>
-        <div class="today-time">${fmtTimeRange(it.time)}${tag}</div>
-      </div>`;
+    dates.forEach(date=>{
+      const wd=WD_NAME[parseDate(date).getDay()];
+      const todayTag = date===t ? '<span class="ad-today">今天</span>' : '';
+      html+=`<div class="agenda-day" onclick="calSelectDate('${date}')"><div class="ad-head">${date} 周${wd}${todayTag}</div>`;
+      groups[date].sort((a,b)=>timeRangeStart(a.time)-timeRangeStart(b.time));
+      groups[date].forEach(it=>{
+        const sl=getStatusLabel(it.status,it.isParent);
+        const extra=it.extraLabel?`<span style="color:#1078A8">${it.extraLabel}</span> · `:'';
+        const sub=`<span class="${sl.cls}">${sl.text}</span>`;
+        html+=`<div class="today-item" onclick="event.stopPropagation();calSelectDate('${date}')">
+          <div class="today-emoji">${it.meta.emoji}</div>
+          <div class="today-main"><div class="today-name">${it.meta.name}</div><div class="today-sub">${extra}${sub}</div></div>
+          <div class="today-time">${fmtTimeRange(it.time)}</div></div>`;
+      });
+      html+='</div>';
     });
-    html+='</div>';
   }
   el.innerHTML=html;
 }
+function setUpRange(r){ upRange=r; renderUpcoming(appData); }
 function toggleCal(){ calCollapsed=!calCollapsed; renderCalendar(appData); }
 
 function renderCalendar(data){
   if(!calYear){ const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth(); }
   if(!calSelDate) calSelDate=today();
   const el=document.getElementById('calendar-box'), t=today();
-  const classMap={};
+  calClassMap={};
   for(const [id,meta] of Object.entries(data.coursesMeta)){
     const pkgs=data.packages[id]||[];
     const firstId=pkgs.length?pkgs[0].id:'';
-    (data.courses[id]||[]).forEach(r=>{
+    (data.courses[id]||[]).forEach((r,idx)=>{
       if(r.deleted) return;
       const pid=r.pkgId||firstId;
       const pk=pkgs.find(p=>p.id===pid);
       const expired= pk && pk.lastDay ? (d)=> d>pk.lastDay : null;
-      if(r.date){ if(expired && expired(r.date)) return; if(!classMap[r.date]) classMap[r.date]=[]; classMap[r.date].push({id,meta,status:r.status,isExtra:false}); }
+      if(r.date){ if(expired && expired(r.date)) return; if(!calClassMap[r.date]) calClassMap[r.date]=[]; calClassMap[r.date].push({id,meta,status:r.status,isExtra:false,record:r,idx}); }
       if(r.extraDate && (r.status==='absent'||r.status==='reschedule'||r.status==='makeup')){
         if(expired && expired(r.extraDate)) return;
-        if(!classMap[r.extraDate]) classMap[r.extraDate]=[];
-        classMap[r.extraDate].push({id,meta,status:r.status,isExtra:true});
+        if(!calClassMap[r.extraDate]) calClassMap[r.extraDate]=[];
+        calClassMap[r.extraDate].push({id,meta,status:r.status,isExtra:true,record:r,idx});
       }
     });
   }
@@ -765,7 +961,7 @@ function renderCalendar(data){
   for(let i=0;i<startWeekday;i++) html+='<div class="cal-cell empty"></div>';
   for(let day=1;day<=daysInMonth;day++){
     const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const classes=classMap[dateStr]||[], hasClass=classes.length>0, isToday=dateStr===t, isSelected=dateStr===calSelDate;
+    const classes=calClassMap[dateStr]||[], hasClass=classes.length>0, isToday=dateStr===t, isSelected=dateStr===calSelDate;
     const dow=new Date(calYear,calMonth,day).getDay(), isWeekend=dow===0||dow===6;
     let dots='',labels='',statusMark='';
     classes.forEach(c=>{
@@ -789,11 +985,104 @@ function calPrevYear(){ calYear--; renderCalendar(appData); scrollRecordToMonth(
 function calNextYear(){ calYear++; renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
 function calGoToday(){ const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth(); calSelDate=today(); renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`); }
 // 点击某天：选中并跳到该天所在月份
+// 点击某天：选中、刷新日历，并弹出当天记录弹窗
 function calSelectDate(ds){
   calSelDate=ds;
   const d=parseDate(ds);
   calYear=d.getFullYear(); calMonth=d.getMonth();
-  renderCalendar(appData); scrollRecordToMonth(`${calYear}年${calMonth+1}月`);
+  renderCalendar(appData);
+  openDayModal(ds);
+}
+// 点击日历某天：弹出当天记录弹窗
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function openDayModal(ds){
+  dayModalDate=ds;
+  const items=(calClassMap[ds]||[]).slice().sort((a,b)=>timeRangeStart(a.record.time)-timeRangeStart(b.record.time));
+  const d=parseDate(ds), wd=WD_NAME[d.getDay()];
+  document.getElementById('day-modal-title').textContent=`${ds} 周${wd} · ${relDay(ds)}`;
+  let html='';
+  if(items.length===0){
+    html='<div class="day-empty">当天没有排课记录～<br>可在下方「➕ 添加当天上课」补记。</div>';
+  } else {
+    items.forEach(c=>{
+      const rec=c.record, actual=getActualStatus(rec);
+      const {text,cls}=getStatusLabel(actual, !!rec.isParentClass);
+      const tag=c.isExtra?(actual==='reschedule'?'🔄 调课':'📅 补课'):'';
+      const note=rec.note?`<div class="day-note">📝 ${escapeHtml(rec.note)}</div>`:'';
+      const click=c.isExtra?`onclick="openRecordEditor('${c.id}',${c.idx},true)"`:`onclick="openRecordEditor('${c.id}',${c.idx},false)"`;
+      html+=`<div class="day-rec" style="border-left-color:${c.meta.color};cursor:pointer" ${click}>
+        <div class="day-rec-head"><span class="day-emoji">${c.meta.emoji}</span><span class="day-name" style="color:${c.meta.color}">${c.meta.name}</span>${tag?`<span class="day-extra">${tag}</span>`:''}<span class="day-status ${cls}">${text}</span></div>
+        <div class="day-time">🕒 ${rec.time||'—'}</div>${note}
+        <div class="day-tap">👆 点击记录</div>
+      </div>`;
+    });
+  }
+  document.getElementById('day-modal-list').innerHTML=html;
+  // 仅当天无任何排课时才显示“添加当天上课”（需选课程，属合理）；有排课的日子靠点课程行直接记录，不弹课程选择
+  const addBtn=document.getElementById('day-add-btn');
+  if(addBtn) addBtn.style.display = items.length===0 ? '' : 'none';
+  document.getElementById('day-modal').dataset.date=ds;
+  document.getElementById('day-modal').classList.add('show');
+}
+function closeDayModal(){ document.getElementById('day-modal').classList.remove('show'); }
+// 刷新（若当天弹窗仍打开）以便记录变更后即时同步
+function refreshDayModalIfOpen(){
+  const dm=document.getElementById('day-modal');
+  if(dm.classList.contains('show') && dm.dataset.date) openDayModal(dm.dataset.date);
+}
+// ===== 上课记录编辑器（点日历某天课程直接记录，复用 toggleStatus/addExtra/editExtra/deleteExtra）=====
+let recModalState={courseId:'',idx:-1,isParent:false};
+let recModalReturn=false;   // 从记录编辑器进入补课/调课弹窗后，保存完自动回到记录编辑器
+function setRecordStatus(courseId, idx, newStatus){
+  const record=appData.courses[courseId][idx];
+  const isParent=!!record.isParentClass;
+  if(newStatus==='parent' && !isParent) return;
+  const oldStatus=record.status==='pending'?'unrecorded':record.status;
+  // 离开 请假/调课/补课时，清除其关联的补课/调课时间
+  if((oldStatus==='absent'||oldStatus==='reschedule'||oldStatus==='makeup')&&!(newStatus==='absent'||newStatus==='reschedule'||newStatus==='makeup')){
+    record.extraDate=''; record.extraTime=''; record.extraNote='';
+  }
+  record.status=newStatus;
+  markUpdate(courseId); saveData(appData); render(appData);
+}
+function openRecordEditor(courseId, idx, isExtra){
+  if(isExtra){ editExtra(courseId, idx); return; }   // 补课/调课条目：直接打开补课/调课编辑
+  const rec=appData.courses[courseId][idx];
+  recModalState={courseId,idx,isParent:!!rec.isParentClass};
+  const meta=appData.coursesMeta[courseId];
+  document.getElementById('rec-modal-title').textContent=`${meta.emoji} ${meta.name} · 上课记录`;
+  document.getElementById('rec-modal-sub').textContent=`${rec.date} 周${weekdayName(parseDate(rec.date))} · 🕒 ${rec.time||'—'}`;
+  const opts = recModalState.isParent
+    ? [['parent','👨‍👩‍👧 亲子课'],['absent','🔴 请假']]
+    : [['normal','✅ 正常'],['absent','🔴 请假'],['holiday','🏖️ 假期'],['reschedule','🔄 调课'],['makeup','📅 补课']];
+  const cur = rec.status==='pending' ? 'normal' : rec.status;
+  let grid='';
+  opts.forEach(([st,txt])=>{ grid+=`<button class="${st===cur?'on':''}" onclick="recSetStatus('${st}')">${txt}</button>`; });
+  document.getElementById('rec-status-grid').innerHTML=grid;
+  document.getElementById('rec-note').value=rec.note||'';
+  const ea=document.getElementById('rec-extra-actions');
+  if(rec.status==='absent'||rec.status==='reschedule'||rec.status==='makeup'){
+    ea.innerHTML = rec.extraDate
+      ? `<button class="modal-btn primary" style="width:100%;margin-bottom:8px;" onclick="recOpenEditExtra()">✏️ 修改补课/调课时间</button><button class="modal-btn cancel" style="width:100%;" onclick="recOpenDeleteExtra()">🗑️ 清除补课/调课</button>`
+      : `<button class="modal-btn primary" style="width:100%;" onclick="recOpenAddExtra()">➕ 添加补课/调课时间</button>`;
+  } else ea.innerHTML='';
+  document.getElementById('record-modal').classList.add('show');
+}
+function recSetStatus(st){ setRecordStatus(recModalState.courseId, recModalState.idx, st); openRecordEditor(recModalState.courseId, recModalState.idx, false); }
+function recSaveNote(){ const {courseId,idx}=recModalState; appData.courses[courseId][idx].note=document.getElementById('rec-note').value.trim(); markUpdate(courseId); saveData(appData); renderOverview(appData); }
+function recOpenAddExtra(){ recModalReturn=true; addExtra(recModalState.courseId,recModalState.idx); }
+function recOpenEditExtra(){ recModalReturn=true; editExtra(recModalState.courseId,recModalState.idx); }
+function recOpenDeleteExtra(){ const {courseId,idx}=recModalState; deleteExtra(courseId,idx); closeRecordModal(); }
+function recDeleteFromModal(){ const {courseId,idx}=recModalState; deleteRecord(courseId,idx); closeRecordModal(); }
+function closeRecordModal(){ document.getElementById('record-modal').classList.remove('show'); refreshDayModalIfOpen(); }
+// 当天弹窗内：为选定日期补记一门课（无课次时也能用）
+function dayAddClass(){
+  const ds=dayModalDate; const courses=Object.keys(appData.coursesMeta);
+  if(courses.length===1){ openAddClass(courses[0], ds); return; }
+  let html=`<div class="day-empty" style="margin-bottom:8px;">选择课程，为 ${ds} 补记上课：</div>`;
+  courses.forEach(id=>{ const m=appData.coursesMeta[id];
+    html+=`<div class="day-rec" style="cursor:pointer;border-left-color:${m.color}" onclick="openAddClass('${id}','${ds}')"><div class="day-rec-head"><span class="day-emoji">${m.emoji}</span><span class="day-name" style="color:${m.color}">${m.name}</span></div></div>`; });
+  document.getElementById('day-modal-list').innerHTML=html;
 }
 // 昨天 / 明天：以当前选中日为基准 ±1 天，并跳到对应月份
 function calShiftDay(delta){
@@ -1018,7 +1307,7 @@ function renderRecordItem(courseId, meta, pkgs, item, dn, tStr){
 
 function render(data){
   if(!data.coursesMeta[activeCourse]) activeCourse=Object.keys(data.coursesMeta)[0];
-  renderToday(data);
+  renderUpcoming(data);
   renderCalendar(data);
   renderOverview(data);
   renderLegend(data);
@@ -1057,6 +1346,20 @@ function toggleStatus(courseId, idx){
 function updateNote(courseId, idx, value){
   appData.courses[courseId][idx].note=value;
   markUpdate(courseId); saveData(appData); renderOverview(appData);
+}
+function switchMainView(v){
+  mainView=v;
+  document.querySelectorAll('#main-tabs .mtab').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  document.getElementById('view-upcoming').style.display = v==='upcoming' ? '' : 'none';
+  document.getElementById('view-manage').style.display   = v==='manage'   ? '' : 'none';
+  document.getElementById('view-history').style.display  = v==='history'  ? '' : 'none';
+  if(v==='upcoming' && calCollapsed){ calCollapsed=false; renderCalendar(appData); }
+}
+function filterHistory(q){
+  q=(q||'').trim().toLowerCase();
+  document.querySelectorAll('#tab-container .lesson-item').forEach(it=>{
+    it.style.display = (!q || it.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
 }
 function switchTab(courseId){
   activeCourse=courseId;
@@ -1116,13 +1419,16 @@ function openExtraForm(mode, status){
   if(mode==='add'){ document.getElementById('extra-date').value=today(); document.getElementById('extra-time-wrap').innerHTML=timeRangeHTML('extra-time', ''); document.getElementById('extra-note').value=''; }
   document.getElementById('extra-modal').classList.add('show');
 }
-function closeExtraModal(){ document.getElementById('extra-modal').classList.remove('show'); }
+function closeExtraModal(){ document.getElementById('extra-modal').classList.remove('show'); recModalReturn=false; refreshDayModalIfOpen(); }
 function saveExtra(){
   const dv=document.getElementById('extra-date').value, tv=readTimeRangeVal('extra-time'), nv=document.getElementById('extra-note').value.trim();
   if(!dv){alert('请选择日期');return;} if(!tv){alert('请填写时间');return;}
   const {courseId,idx}=extraModalState, rec=appData.courses[courseId][idx];
   rec.extraDate=dv; rec.extraTime=tv; rec.extraNote=nv;
-  markUpdate(courseId); saveData(appData); render(appData); closeExtraModal();
+  markUpdate(courseId); saveData(appData); render(appData);
+  const back=recModalReturn; recModalReturn=false;
+  closeExtraModal();
+  if(back) openRecordEditor(courseId, idx, false);  // 返回记录编辑器并刷新
 }
 function deleteExtra(courseId, idx){
   if(!confirm('确定清除这条补课/调课记录？')) return;
@@ -1262,7 +1568,7 @@ function deletePkg(courseId, pkgId){
 
 // 添加上课（非固定日期）
 let acModalState={courseId:''};
-function openAddClass(courseId){
+function openAddClass(courseId, prefillDate){
   acModalState={courseId};
   const meta=appData.coursesMeta[courseId];
   document.getElementById('ac-course-name').textContent=`${meta.emoji} ${meta.name}`;
@@ -1275,14 +1581,14 @@ function openAddClass(courseId){
     sel.disabled=false;
     sel.innerHTML=pkgs.map(p=>`<option value="${p.id}">${p.name||'课时包'}</option>`).join('');
   }
-  document.getElementById('ac-date').value=today();
+  document.getElementById('ac-date').value=prefillDate||today();
   const firstPkg=pkgs[0];
   document.getElementById('ac-time-wrap').innerHTML=timeRangeHTML('ac-time', firstPkg?(firstPkg.time||''):'');
   document.getElementById('ac-note').value='';
   document.getElementById('ac-modal').classList.add('show');
   setTimeout(()=>document.getElementById('ac-date').focus(),50);
 }
-function closeAddClassModal(){ document.getElementById('ac-modal').classList.remove('show'); }
+function closeAddClassModal(){ document.getElementById('ac-modal').classList.remove('show'); refreshDayModalIfOpen(); }
 function saveAddClass(){
   const dv=document.getElementById('ac-date').value;
   const tv=readTimeRangeVal('ac-time');
@@ -1478,6 +1784,8 @@ function importData(input){
     appData=data;
     if(!appData.coursesMeta[activeCourse]) activeCourse=Object.keys(appData.coursesMeta)[0]||'';
     render(data);
+    switchMainView('upcoming');
+    startSyncPoll();   // 启动家庭共享同步（无 token 时自动跳过）
     if(data.locked){
       document.body.classList.add('locked');
       const btn=document.getElementById('lock-btn');
