@@ -198,6 +198,16 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 .sync-status.ok{background:#E8F8EF;color:#1E9E5A;}
 .sync-status.offline{background:#FFF8E6;color:#B7791F;}
 .sync-status.error{background:#FDECEA;color:#D6453D;}
+#sync-settings-modal .modal{max-width:380px;}
+.sync-tip{font-size:12px;color:#666;line-height:1.6;margin:0 0 12px;}
+.sync-tip b{color:#333;}
+.sync-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;color:#444;}
+.sync-row>span{width:72px;flex:none;}
+.sync-row input{flex:1;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px;}
+.sync-row.sync-check{justify-content:flex-start;gap:6px;}
+.sync-row.sync-check input{width:auto;flex:none;}
+.sync-msg{font-size:12px;min-height:16px;margin:8px 0 0;color:#1E9E5A;}
+.sync-msg.err{color:#D6453D;}
 .mtab{flex:1;padding:11px 4px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
 .mtab.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(102,126,234,0.35);}
 /* 历史搜索 */
@@ -322,7 +332,27 @@ body.dirty .backup-warn{display:block;}
     <button class="mtab" data-view="manage" onclick="switchMainView('manage')">📊 课时管理</button>
     <button class="mtab" data-view="history" onclick="switchMainView('history')">📜 历史记录</button>
   </div>
-  <div id="sync-status" class="sync-status" onclick="forceSync()" title="点击立即同步">🟡 未同步</div>
+  <div id="sync-status" class="sync-status" onclick="openSyncSettings()" title="点击配置家庭共享同步">🔵 未配置·点此设置</div>
+
+  <!-- 同步设置弹窗：令牌仅存于本机浏览器，不写进文件 -->
+  <div class="modal-overlay" id="sync-settings-modal">
+    <div class="modal">
+      <h3>👨‍👩‍👧 家庭共享同步设置</h3>
+      <p class="sync-tip">数据通过 GitHub 仓库 <b>viya-c/keche-tracker</b> 内的 <b>data.json</b> 共享。令牌只保存在<strong>这台设备</strong>的浏览器里，不会上传，也不会写进网页文件。</p>
+      <label class="sync-row"><span>仓库所有者</span><input id="sync-owner" value="viya-c" /></label>
+      <label class="sync-row"><span>仓库名</span><input id="sync-repo" value="keche-tracker" /></label>
+      <label class="sync-row"><span>分支</span><input id="sync-branch" placeholder="留空=默认分支" /></label>
+      <label class="sync-row"><span>访问令牌</span><input id="sync-token" type="password" placeholder="github_pat_…（仅此仓库 Contents 读写）" autocomplete="off" /></label>
+      <label class="sync-row sync-check"><input id="sync-enable" type="checkbox" checked /> 启用家庭共享同步</label>
+      <div id="sync-modal-msg" class="sync-msg"></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="testSync()">测试连接</button>
+        <button class="btn-ghost" onclick="forceSync()">立即同步</button>
+        <button class="btn-primary" onclick="saveSyncCfg()">保存并连接</button>
+        <button class="btn-ghost" onclick="closeSyncSettings()">关闭</button>
+      </div>
+    </div>
+  </div>
   <div id="view-upcoming">
     <div class="today-box" id="today-box"></div>
     <div class="calendar-box" id="calendar-box"></div>
@@ -578,16 +608,18 @@ function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 
 // ============================================================
 // 家庭共享同步（GitHub 仓库内的 data.json 作为唯一数据源，轮询近实时）
-// 说明：仅此仓库、Contents 读写权限的细粒度 token 会被写进页面，
-//      任何人打开页面理论上可提取该 token，但仅限这一仓库，可随时撤销。
+// 关键设计：令牌不写进文件。每台设备在本机浏览器 localStorage 中保存
+// 自己的令牌（keche_sync_cfg），因此推送 index.html 时不含任何密钥，
+// 不会触发 GitHub 密钥扫描。未配置令牌的设备也可只读实时查看共享数据
+// （公开仓库支持免认证 GET）。
 // ============================================================
 const SYNC = {
   enabled: true,
   owner: 'viya-c',
   repo: 'keche-tracker',
   path: 'data.json',
-  token: '',            // 部署时填入（细粒度 token，仅此仓库）
-  interval: 20000,      // 轮询间隔(ms)
+  token: '',            // 运行时由本机 localStorage 载入（不写进文件）
+  interval: 20000,      // 有令牌时的轮询间隔(ms)
   branch: null,         // 自动探测默认分支
 };
 let _suppressSync=false;   // 从远端载入时不触发回写，避免循环
@@ -599,10 +631,11 @@ let _syncLast=0;           // 上次成功同步时间戳
 
 function b64enc(str){ return btoa(unescape(encodeURIComponent(str))); }
 function b64dec(b64){ return decodeURIComponent(escape(atob(b64))); }
-function ghHeaders(){ return {'Authorization':'token '+SYNC.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
+function ghHeaders(){ const h={'Accept':'application/vnd.github+json','Content-Type':'application/json'}; if(SYNC.token) h.Authorization='Bearer '+SYNC.token; return h; }
 async function ghBranch(){
   if(SYNC.branch) return SYNC.branch;
-  const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}`,{headers:ghHeaders()});
+  const h={'Accept':'application/vnd.github+json'}; if(SYNC.token) h.Authorization='Bearer '+SYNC.token;
+  const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}`,{headers:h});
   if(!r.ok) throw new Error('repo '+r.status);
   const j=await r.json(); SYNC.branch=j.default_branch||'main'; return SYNC.branch;
 }
@@ -624,21 +657,23 @@ async function ghPut(data, sha){
 }
 function setSyncStatus(s){
   const el=document.getElementById('sync-status'); if(!el) return;
-  const map={syncing:['🔄','同步中…'],ok:['🟢','已同步 '+fmtSyncTime(_syncLast)],offline:['🟡','离线·仅本地'],error:['🔴','同步失败']};
+  const map={syncing:['🔄','同步中…'],ok:['🟢','已同步 '+fmtSyncTime(_syncLast)],offline:['🟡','离线·仅本地'],error:['🔴','同步失败'],readonly:['🔵','未配置·点此设置']};
   const m=map[s]||map.offline; el.textContent=m[0]+' '+m[1]; el.className='sync-status '+s;
 }
 function fmtSyncTime(ts){ if(!ts) return ''; const d=new Date(ts), p=n=>String(n).padStart(2,'0'); return p(d.getHours())+':'+p(d.getMinutes()); }
 async function pushLocal(){
+  if(!SYNC.token){ setSyncStatus('readonly'); return; }
   let sha=_syncSha;
   if(!sha){ const cur=await ghGet(); sha=cur?cur.sha:null; _syncSha=sha; if(!cur){ _syncSha=await ghPut(appData,null); return; } }
   _syncSha=await ghPut(appData, sha);
 }
 function syncSave(){
-  if(!SYNC.enabled || !SYNC.token) return;
+  if(!SYNC.enabled) return;
+  if(!SYNC.token){ setSyncStatus('readonly'); return; }
   if(_syncSaveTimer) clearTimeout(_syncSaveTimer);
   _syncSaveTimer=setTimeout(async ()=>{
     if(_syncBusy) return; _syncBusy=true; setSyncStatus('syncing');
-    try{ await pushLocal(); setSyncStatus('ok'); _syncLast=Date.now(); }
+    try{ await pushLocal(); if(SYNC.token){ setSyncStatus('ok'); _syncLast=Date.now(); } }
     catch(e){
       if(e&&e.conflict){ try{ const cur=await ghGet(); _syncSha=cur?cur.sha:null; _syncSha=await ghPut(appData,_syncSha); setSyncStatus('ok'); _syncLast=Date.now(); }
         catch(e2){ setSyncStatus('error'); } }
@@ -653,18 +688,19 @@ async function applyRemote(){
   let rd=cur.data; if(!rd||!rd.coursesMeta) rd=initData();
   if(!rd.coursesMeta[activeCourse]) activeCourse=Object.keys(rd.coursesMeta)[0]||'';
   _suppressSync=true; appData=rd; saveData(appData); render(appData); _suppressSync=false;
-  setSyncStatus('ok'); _syncLast=Date.now(); return true;
+  setSyncStatus(SYNC.token ? 'ok' : 'readonly'); if(SYNC.token) _syncLast=Date.now(); return true;
 }
 async function syncLoad(){
-  if(!SYNC.enabled || !SYNC.token) return;
+  if(!SYNC.enabled) return;
   setSyncStatus('syncing');
-  try{ if(!(await applyRemote())){ _syncSha=await ghPut(appData,null); setSyncStatus('ok'); _syncLast=Date.now(); } }
-  catch(e){ setSyncStatus('offline'); }
+  try{ if(!(await applyRemote())){ if(SYNC.token){ _syncSha=await ghPut(appData,null); setSyncStatus('ok'); _syncLast=Date.now(); } else setSyncStatus('readonly'); } }
+  catch(e){ setSyncStatus(SYNC.token ? 'offline' : 'readonly'); }
 }
 function startSyncPoll(){
-  if(!SYNC.enabled || !SYNC.token) return;
+  if(!SYNC.enabled) return;
   syncLoad();
   if(_syncTimer) clearInterval(_syncTimer);
+  const iv = SYNC.token ? SYNC.interval : 70000; // 无令牌时降频，规避未认证限流(60/h)
   _syncTimer=setInterval(async ()=>{
     if(_syncBusy) return;
     try{
@@ -674,9 +710,44 @@ function startSyncPoll(){
       const j=await r.json();
       if(j.sha!==_syncSha){ await applyRemote(); }
     }catch(e){ /* 轮询容错：忽略瞬时错误 */ }
-  }, SYNC.interval);
+  }, iv);
 }
-function forceSync(){ if(SYNC.enabled&&SYNC.token) syncLoad(); }
+function forceSync(){ syncLoad(); }
+
+// —— 同步设置（令牌存于本机 localStorage，不写进文件）——
+function loadSyncCfg(){
+  try{ const raw=localStorage.getItem('keche_sync_cfg'); if(raw){ const c=JSON.parse(raw); SYNC.owner=c.owner||SYNC.owner; SYNC.repo=c.repo||SYNC.repo; SYNC.branch=c.branch||null; SYNC.token=c.token||''; SYNC.enabled=c.enabled!==false; } }catch(e){}
+  setSyncStatus(SYNC.token ? 'syncing' : 'readonly');
+}
+function openSyncSettings(){
+  document.getElementById('sync-owner').value=SYNC.owner;
+  document.getElementById('sync-repo').value=SYNC.repo;
+  document.getElementById('sync-branch').value=SYNC.branch||'';
+  document.getElementById('sync-token').value=SYNC.token;
+  document.getElementById('sync-enable').checked=SYNC.enabled;
+  syncModalMsg('', false);
+  document.getElementById('sync-settings-modal').classList.add('show');
+}
+function closeSyncSettings(){ document.getElementById('sync-settings-modal').classList.remove('show'); }
+function saveSyncCfg(){
+  SYNC.owner=document.getElementById('sync-owner').value.trim()||'viya-c';
+  SYNC.repo=document.getElementById('sync-repo').value.trim()||'keche-tracker';
+  SYNC.branch=document.getElementById('sync-branch').value.trim()||null;
+  SYNC.token=document.getElementById('sync-token').value.trim();
+  SYNC.enabled=document.getElementById('sync-enable').checked;
+  try{ localStorage.setItem('keche_sync_cfg', JSON.stringify({owner:SYNC.owner,repo:SYNC.repo,branch:SYNC.branch,token:SYNC.token,enabled:SYNC.enabled})); }catch(e){}
+  syncModalMsg('已保存本机配置，正在连接…', false);
+  if(_syncTimer){ clearInterval(_syncTimer); _syncTimer=null; }
+  startSyncPoll();
+  closeSyncSettings();
+}
+async function testSync(){
+  if(!SYNC.token){ syncModalMsg('请先填写令牌后再测试连接。', true); return; }
+  syncModalMsg('正在连接…', false);
+  try{ await ghBranch(); const cur=await ghGet(); syncModalMsg('连接成功'+(cur?'，已读取到共享数据':'，将自动创建 data.json'), false); }
+  catch(e){ syncModalMsg('连接失败：'+(e&&e.message?e.message:e), true); }
+}
+function syncModalMsg(t, isErr){ const el=document.getElementById('sync-modal-msg'); if(!el) return; el.textContent=t||''; el.className='sync-msg'+(isErr?' err':''); }
 // 判断是否仍是初始种子数据（用户尚未自建课时包 / 手动课）
 function isFreshSeed(data){
   const cids=Object.keys((data&&data.coursesMeta)||{});
@@ -1785,7 +1856,8 @@ function importData(input){
     if(!appData.coursesMeta[activeCourse]) activeCourse=Object.keys(appData.coursesMeta)[0]||'';
     render(data);
     switchMainView('upcoming');
-    startSyncPoll();   // 启动家庭共享同步（无 token 时自动跳过）
+    loadSyncCfg();     // 从本机 localStorage 载入同步配置（含令牌）
+    startSyncPoll();   // 启动家庭共享同步（无令牌时自动进入只读实时查看）
     if(data.locked){
       document.body.classList.add('locked');
       const btn=document.getElementById('lock-btn');
