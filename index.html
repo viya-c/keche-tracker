@@ -417,6 +417,10 @@ body.dirty .backup-warn{display:block;}
     <input type="text" id="pf-name" placeholder="如：春季班续费" />
     <label>课节数</label>
     <input type="number" id="pf-lessons" placeholder="如：20" min="1" />
+    <label>每节课课时数（课时）</label>
+    <input type="number" id="pf-hours" min="1" value="1" />
+    <label>每节课时长（分钟）</label>
+    <input type="number" id="pf-minutes" min="1" value="60" oninput="pfMinutesChanged()" />
     <label>开始日期</label>
     <input type="date" id="pf-start" />
     <label>最后一天上课（选填）</label>
@@ -577,12 +581,33 @@ function splitTimeVal(v){
   if(m) return [pad2(m[1])+':'+m[2],''];
   return ['',''];
 }
-function timeRangeHTML(baseId, val){
+function timeRangeHTML(baseId, val, onStart){
   const sv=splitTimeVal(val);
+  const on = onStart ? ` oninput="${onStart}"` : '';
   return `<span class="time-range">`+
-    `<input type="time" id="${baseId}-start" value="${sv[0]}" />`+
+    `<input type="time" id="${baseId}-start" value="${sv[0]}"${on} />`+
     `<span class="time-sep">–</span>`+
     `<input type="time" id="${baseId}-end" value="${sv[1]}" /></span>`;
+}
+// 从 "17:00-18:30" 推导时长（分钟）
+function deriveMinutes(v){
+  const [s,e]=splitTimeVal(v);
+  if(s&&e){ const [sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number); const m=(eh*60+em)-(sh*60+sm); if(m>0) return m; }
+  return null;
+}
+// 课时包：填了开始时间就按“每节课时长”自动算出结束时间
+function autoPkgEnd(baseId){
+  const s=document.getElementById(baseId+'-start').value;
+  const eEl=document.getElementById(baseId+'-end');
+  if(!s||!pfLessonMinutes) return;
+  const [sh,sm]=s.split(':').map(Number);
+  const total=sh*60+sm+parseInt(pfLessonMinutes,10);
+  const eh=Math.floor(total/60)%24, em=total%60;
+  eEl.value=pad2(eh)+':'+pad2(em);
+}
+function pfMinutesChanged(){
+  pfLessonMinutes=parseInt(document.getElementById('pf-minutes').value,10)||0;
+  pfWeekdays.forEach(w=>autoPkgEnd('pf-time-'+w));
 }
 function readTimeRangeVal(baseId){
   const s=(document.getElementById(baseId+'-start').value||'').trim();
@@ -1541,7 +1566,7 @@ function openPkgManage(courseId){
       </div>`;
     html+=`<div class="pkg-item${isContainer?' container':''}"><div class="pkg-item-main">
       <div class="pkg-item-name">📦 ${p.name||('课时包'+(i+1))}${isContainer?' <span class="pkg-tag-shared">共享</span>':''}</div>
-      <div class="pkg-item-sub">${p.lessons}节 · ${wdText(p.weekdays)} · ${pkgTimeText(p)} · 始于${p.startDate}${p.lastDay?(' · 止于'+p.lastDay):''} · ${remText}</div>
+      <div class="pkg-item-sub">${p.lessons}节 · ${wdText(p.weekdays)} · ${pkgTimeText(p)}${p.lessonMinutes?(' · '+p.lessonMinutes+'分钟/节'):''} · 始于${p.startDate}${p.lastDay?(' · 止于'+p.lastDay):''} · ${remText}</div>
       </div>${acts}</div>`;
   });
   document.getElementById('pm-list').innerHTML=html;
@@ -1552,7 +1577,7 @@ function openPkgManage(courseId){
 function closePkgManage(){ document.getElementById('pkg-manage-modal').classList.remove('show'); }
 
 // 课时包 添加/编辑
-let pfCourseId='', pfEditId='', pfWeekdays=[], pfTimes={};
+let pfCourseId='', pfEditId='', pfWeekdays=[], pfTimes={}, pfLessonMinutes=60;
 function openPkgForm(mode, courseId, pkgId){
   if(courseId) pfCourseId=courseId; pfEditId = mode==='edit'?pkgId:'';
   const title=document.getElementById('pf-title');
@@ -1569,6 +1594,10 @@ function openPkgForm(mode, courseId, pkgId){
     pfTimes={};
     if(pkg.times) for(const k in pkg.times) pfTimes[k]=pkg.times[k];
     else if(pkg.time) pfWeekdays.forEach(w=>pfTimes[w]=pkg.time);
+    let dm=null;
+    for(const w in pfTimes){ dm=deriveMinutes(pfTimes[w]); if(dm) break; }
+    if(!dm && pkg.time) dm=deriveMinutes(pkg.time);
+    pfLessonMinutes = pkg.lessonMinutes || dm || 60;
   } else {
     title.textContent='➕ 添加课时包';
     document.getElementById('pf-name').value='';
@@ -1576,7 +1605,10 @@ function openPkgForm(mode, courseId, pkgId){
     document.getElementById('pf-start').value=today();
     document.getElementById('pf-last').value='';
     pfWeekdays=[]; pfTimes={};
+    pfLessonMinutes = appData.coursesMeta[pfCourseId].lessonMinutes || 60;
   }
+  document.getElementById('pf-hours').value = appData.coursesMeta[pfCourseId].hoursPerLesson || 1;
+  document.getElementById('pf-minutes').value = pfLessonMinutes;
   renderPkgWeekdays();
   document.getElementById('pkg-form-modal').classList.add('show');
 }
@@ -1602,7 +1634,7 @@ function renderPkgTimes(){
   let html='';
   pfWeekdays.forEach(w=>{
     const v=(pfTimes[w]!==undefined)?pfTimes[w]:'';
-    html+=`<label>周${WD_NAME[w]} 时间</label>`+timeRangeHTML('pf-time-'+w, v);
+    html+=`<label>周${WD_NAME[w]} 时间（结束时间自动算出）</label>`+timeRangeHTML('pf-time-'+w, v, `autoPkgEnd('pf-time-${w}')`);
   });
   wrap.innerHTML=html;
 }
@@ -1612,20 +1644,27 @@ function savePkgForm(){
   const lessons=parseInt(document.getElementById('pf-lessons').value,10);
   const start=document.getElementById('pf-start').value;
   const last=document.getElementById('pf-last').value;
+  const hp=parseInt(document.getElementById('pf-hours').value,10);
+  const mins=parseInt(document.getElementById('pf-minutes').value,10);
   if(isNaN(lessons)||lessons<0){ alert('请输入有效的课节数（可为0：仅作不同时间的上课容器，不计入总剩余课时）'); return; }
+  if(!hp||hp<=0){ alert('请输入每节课课时数'); return; }
+  if(!mins||mins<=0){ alert('请输入每节课时长（分钟）'); return; }
   if(!start){ alert('请选择开始日期'); return; }
   if(pfWeekdays.length===0){ alert('请选择上课星期'); return; }
   const times={};
   let ok=true;
   pfWeekdays.forEach(w=>{ const tv=readTimeRangeVal('pf-time-'+w); times[w]=tv; if(!tv) ok=false; });
   if(!ok){ alert('请填写所选星期的时间'); return; }
+  appData.coursesMeta[pfCourseId].hoursPerLesson=hp;
+  appData.coursesMeta[pfCourseId].lessonMinutes=mins;
+  pfLessonMinutes=mins;
   const list=appData.packages[pfCourseId];
   if(pfEditId){
     const idx=list.findIndex(p=>p.id===pfEditId);
     const old=list[idx];
-    list[idx]={ id:pfEditId, name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, addedAt:old.addedAt };
+    list[idx]={ id:pfEditId, name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, lessonMinutes:mins, addedAt:old.addedAt };
   } else {
-    list.push({ id:'p'+Date.now(), name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, addedAt:new Date().toISOString() });
+    list.push({ id:'p'+Date.now(), name:name||('课时包'+(list.length+1)), lessons, weekdays:pfWeekdays.slice(), times, time:times[pfWeekdays[0]]||'', startDate:start, lastDay:last, lessonMinutes:mins, addedAt:new Date().toISOString() });
   }
   syncAll(appData);
   saveData(appData);
