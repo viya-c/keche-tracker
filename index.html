@@ -53,6 +53,7 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 .overview{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .ov-card{flex:1;min-width:200px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-top:4px solid transparent;cursor:pointer;position:relative;}
 .ov-title{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
+.ov-sub{font-size:12px;font-weight:700;color:#1078A8;margin-bottom:6px;}
 .ov-main{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;}
 .ov-remain{font-size:26px;font-weight:800;}
 .ov-remain span{font-size:13px;font-weight:400;color:var(--text-muted);}
@@ -1202,10 +1203,12 @@ function renderOverview(data){
     const records=data.courses[id]||[];
     const s=calcStats(id,records,data);
     const lastTime=formatUpdateTime(data.lastUpdate?.[id]||'');
+    const hp=meta.hoursPerLesson||1;
     const pkgText = s.packages.length>1 ? `${s.packages.length}个课时包 · 共${s.totalLessons}节` : `共${s.totalLessons}节`;
     html+=`<div class="ov-card" onclick="switchTab('${id}')" style="border-top-color:${meta.color}">
       <button class="ov-edit-btn" onclick="event.stopPropagation();openCourseForm('edit','${id}')" title="编辑课程">⚙️</button>
       <div class="ov-title">${meta.emoji} ${meta.name}</div>
+      <div class="ov-sub">⏱️ 1 节 = ${hp} 课时</div>
       <div class="ov-main"><div class="ov-remain">${s.remaining}<span> 课时剩余</span></div>
       <div class="ov-meta">${s.consumed}/${s.totalHours} 已消耗<br><span style="font-size:11px;">⏱️ ${lastTime}</span></div></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${s.percent}%;background:${meta.color}"></div></div>
@@ -1249,7 +1252,7 @@ function renderTab(courseId, data, el){
   const hp=(data.coursesMeta[courseId]&&data.coursesMeta[courseId].hoursPerLesson)||1;
   const courseRemLessons=Math.max(0, Math.round(calcStats(courseId,records,data).remaining/hp));
   const t=today();
-  const head=`<div class="tab-head"><div class="tab-head-info">📦 ${tot.packages.length}个课时包 · 共 <b>${tot.lessons}</b> 节 / ${tot.hours} 课时</div>
+  const head=`<div class="tab-head"><div class="tab-head-info">📦 ${tot.packages.length}个课时包 · 共 <b>${tot.lessons}</b> 节 / ${tot.hours} 课时 · <b>1节=${hp}课时</b></div>
     <button class="toolbar-btn add-class-btn" onclick="openAddClass('${courseId}')">➕ 添加上课</button>
     <button class="toolbar-btn" onclick="openPkgManage('${courseId}')">📦 课时包</button></div>`;
   const pkgs=data.packages[courseId]||[];
