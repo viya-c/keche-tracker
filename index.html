@@ -237,9 +237,7 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 .pkg-item-acts{display:flex;gap:4px;flex-shrink:0;}
 #pf-course-hint{font-size:13px;color:var(--text-muted);margin-bottom:14px;}
 
-/* 锁定状态（只读：保留课时包查看入口，禁用一切编辑/添加/删除） */
-body.locked .status-btn,
-body.locked .note-input,
+/* 锁定状态：禁用结构编辑/添加/删除，但保留日常登记（状态切换、备注）以便每日打卡 */
 body.locked .edit-btn,
 body.locked .del-btn,
 body.locked .toolbar-btn.danger,
@@ -298,9 +296,11 @@ body.locked .month-header{pointer-events:auto;}
 .recovery-note ol{margin:6px 0 0;padding-left:20px;}
 .recovery-note code{background:#fff;padding:1px 5px;border-radius:4px;border:1px solid #CFE0FF;}
 /* 未备份提醒（有改动尚未导出时显示） */
-.backup-warn{display:none;background:#FFF4E5;color:#B26A00;border:1px solid #FFD8A8;font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:var(--radius);margin-bottom:12px;line-height:1.6;}
-body.dirty .backup-warn{display:block;}
+.backup-warn{display:none;position:relative;background:#FFF4E5;color:#B26A00;border:1px solid #FFD8A8;font-size:12.5px;font-weight:700;padding:8px 28px 8px 12px;border-radius:var(--radius);margin-bottom:12px;line-height:1.6;}
+body.dirty:not(.bw-dismissed) .backup-warn{display:block;}
 .backup-warn b{color:#8A4B00;}
+.bw-close{position:absolute;top:4px;right:8px;cursor:pointer;font-size:15px;line-height:1;opacity:.55;}
+.bw-close:hover{opacity:1;}
 /* 新版本提示横幅 */
 .update-banner{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(135deg,#059669,#10B981);color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.25);font-size:13px;}
 .update-banner .ub-icon{font-size:20px;flex-shrink:0;}
@@ -345,7 +345,7 @@ body.dirty .backup-warn{display:block;}
     </ol>
   </div>
 </div>
-<div class="backup-warn" id="backup-warn">⚠️ 有改动尚未备份！点工具栏 <b>📦 自包含备份</b> 把数据存进文件，换手机 / 换路径都不会丢。</div>
+<div class="backup-warn" id="backup-warn">⚠️ 有改动尚未备份！点工具栏 <b>📦 自包含备份</b> 把数据存进文件，换手机 / 换路径都不会丢。<span class="bw-close" onclick="dismissBackupWarn()" title="不再提示">✕</span></div>
 <div class="container">
   <div class="main-tabs" id="main-tabs">
     <button class="mtab active" data-view="upcoming" onclick="switchMainView('upcoming')">📅 近期安排</button>
@@ -645,7 +645,7 @@ function cmpRecords(a,b){
 // localStorage（固定key，永不更改）
 // ============================================================
 const STORAGE_KEY = 'course_tracker_final';
-const APP_VERSION = '2026-07-29T12:23:57Z'; // 部署版本号（每次部署由 deploy 脚本更新，配合 version.json 检测新版本）
+const APP_VERSION = '2026-07-29T17:08:24Z'; // 部署版本号（每次部署由 deploy 脚本更新，配合 version.json 检测新版本）
 let _dirty=false; // 是否有未备份的改动（用于"未备份提醒"）
 
 // —— 新版本提示：仅在使用 GitHub Pages 在线版时检测；本地 file:// 打开不检测 ——
@@ -671,9 +671,10 @@ function dismissUpdate(){
   if(b){ b.style.display='none'; try{ sessionStorage.setItem('ub_ignore', b.dataset.v||''); }catch(e){} }
 }
 function markDirty(){ _dirty=true; try{ document.body.classList.add('dirty'); }catch(e){} }
-function clearDirty(){ _dirty=false; try{ document.body.classList.remove('dirty'); }catch(e){} }
+function clearDirty(){ _dirty=false; try{ document.body.classList.remove('dirty'); document.body.classList.remove('bw-dismissed'); }catch(e){} }
+function dismissBackupWarn(){ try{ document.body.classList.add('bw-dismissed'); }catch(e){} }
 function loadData(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); }catch(e){} return null; }
-function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); markDirty(); if(!_suppressSync) syncSave(); }
+function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); if(!_suppressSync) markDirty(); if(!_suppressSync) syncSave(); }
 
 // ============================================================
 // 家庭共享同步（GitHub 仓库内的 data.json 作为唯一数据源，轮询近实时）
@@ -1346,6 +1347,12 @@ function renderTab(courseId, data, el){
       if(!(exp && exp(record.extraDate))) allItems.push({type:'extra',idx,record});
     }
   });
+  // 历史视图：尚未上课且未登记的课次（待记录/待上课）不显示，仅展示已登记的记录
+  allItems = allItems.filter(it=>{
+    if(it.type==='extra') return true;
+    const act=getActualStatus(it.record);
+    return act!=='unrecorded' && act!=='pending';
+  });
   let months=[], curMonth='', curGroup=[];
   allItems.forEach(item=>{
     const mo=monthLabel(parseDate(item.type==='lesson'?item.record.date:item.record.extraDate));
@@ -1389,8 +1396,7 @@ function renderTab(courseId, data, el){
     });
     const summary=`${month.items.length}条 | 出勤${mN} 请假${mA} 假期${mH} 调课${mR} 补课${mM}${mE>0?' 加课'+mE:''}`;
     const isExpanded = expandedMonths.has(groupKey);
-    html+=`<div class="month-group ${isExpanded?'':'collapsed'}" id="${groupId}"><div class="month-header" onclick="toggleMonth('${groupId}','${groupKey}')"><span class="month-arrow ${isExpanded?'':'collapsed'}">▼</span> ${month.label}<span class="month-summary">${summary}</span></div>`;
-    // 月内再按课时包分组：先区分课时包，再展示该包课次
+    // 月内再按课时包分组
     const byPkg={};
     month.items.forEach(item=>{
       const pid=(item.record.pkgId)||(pkgs.length?pkgs[0].id:'__none');
@@ -1399,6 +1405,7 @@ function renderTab(courseId, data, el){
     const pkgOrder=pkgs.map(p=>p.id).filter(pid=>(byPkg[pid]&&byPkg[pid].length));
     Object.keys(byPkg).forEach(pid=>{ if(!pkgOrder.includes(pid)) pkgOrder.push(pid); });
     if(zeroCover[month.label]) zeroCover[month.label].forEach(pid=>{ if(!pkgOrder.includes(pid)) pkgOrder.push(pid); });
+    let blocksHtml='';
     pkgOrder.forEach(pid=>{
       let items=(byPkg[pid]||[]).slice().sort((a,b)=>{
         const da=(a.type==='extra'?a.record.extraDate:a.record.date), db=(b.type==='extra'?b.record.extraDate:b.record.date);
@@ -1406,10 +1413,11 @@ function renderTab(courseId, data, el){
         const ta=(a.record.time||''), tb=(b.record.time||''); return ta<tb?-1:(ta>tb?1:0);
       });
       const pk=pkgs.find(p=>p.id===pid);
+      const isContainer = pk && (parseInt(pk.lessons,10)||0)===0;
+      if(items.length===0 && !isContainer) return; // 历史中该包本月无任何已登记课次 → 不显示空块
       const pname=pk?pk.name:'未分包';
       const pinfo=pk?`${wdText(pk.weekdays)} · ${pkgTimeText(pk)}`:'';
       const ps=pkgStats(courseId, pid, data);
-      const isContainer = pk && (parseInt(pk.lessons,10)||0)===0;
       const countText = isContainer ? `🔗 共享剩余 ${courseRemLessons} 节` : `共 ${ps.total} 节 · 剩 ${ps.remaining} 节`;
       const completed = pkgDoneInMonth(pk, month.label);
       const pkgKey=`${courseId}|${month.label}|${pid}`;
@@ -1419,12 +1427,13 @@ function renderTab(courseId, data, el){
       const doneTag = completed ? `<span class="pkg-tag-done">✅已结课</span>` : '';
       const blockId=`pg-${groupId}-${pid}`;
       const emptyHint = items.length===0 ? `<div class="pkg-empty">暂无课次 · 点「➕ 添加上课」选本包记录</div>` : '';
-      html+=`<div class="pkg-block${isContainer?' container':''}${expanded?'':' collapsed'}" id="${blockId}"><div class="pkg-subhead" onclick="togglePkg('${blockId}','${pkgKey}')"><span class="pkg-subarrow ${expanded?'':'collapsed'}">${subArrow}</span><span class="pkg-subname">📦 ${pname}</span>${pinfo?`<span class="pkg-subinfo">${pinfo}</span>`:''}${lastInfo}${doneTag}<span class="pkg-subcount">${countText}</span></div>${emptyHint}`;
+      blocksHtml+=`<div class="pkg-block${isContainer?' container':''}${expanded?'':' collapsed'}" id="${blockId}"><div class="pkg-subhead" onclick="togglePkg('${blockId}','${pkgKey}')"><span class="pkg-subarrow ${expanded?'':'collapsed'}">${subArrow}</span><span class="pkg-subname">📦 ${pname}</span>${pinfo?`<span class="pkg-subinfo">${pinfo}</span>`:''}${lastInfo}${doneTag}<span class="pkg-subcount">${countText}</span></div>${emptyHint}`;
       let dn=0;
-      items.forEach(item=>{ dn++; html+=renderRecordItem(courseId,meta,pkgs,item,dn,t); });
-      html+='</div>';
+      items.forEach(item=>{ dn++; blocksHtml+=renderRecordItem(courseId,meta,pkgs,item,dn,t); });
+      blocksHtml+='</div>';
     });
-    html+='</div>';
+    if(!blocksHtml) return; // 整月无已登记课次 → 不显示该月份
+    html+=`<div class="month-group ${isExpanded?'':'collapsed'}" id="${groupId}"><div class="month-header" onclick="toggleMonth('${groupId}','${groupKey}')"><span class="month-arrow ${isExpanded?'':'collapsed'}">▼</span> ${month.label}<span class="month-summary">${summary}</span></div>${blocksHtml}</div>`;
   });
   html+='</div>';
   el.innerHTML=html;
