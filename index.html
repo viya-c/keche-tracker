@@ -301,9 +301,28 @@ body.locked .month-header{pointer-events:auto;}
 .backup-warn{display:none;background:#FFF4E5;color:#B26A00;border:1px solid #FFD8A8;font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:var(--radius);margin-bottom:12px;line-height:1.6;}
 body.dirty .backup-warn{display:block;}
 .backup-warn b{color:#8A4B00;}
+/* 新版本提示横幅 */
+.update-banner{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(135deg,#059669,#10B981);color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.25);font-size:13px;}
+.update-banner .ub-icon{font-size:20px;flex-shrink:0;}
+.update-banner .ub-text{flex:1;min-width:0;}
+.update-banner .ub-title{font-weight:700;font-size:14px;line-height:1.2;}
+.update-banner .ub-note{font-size:12px;opacity:.92;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.update-banner .ub-btn{background:#fff;color:#059669;border:none;border-radius:10px;padding:7px 13px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.update-banner .ub-close{background:transparent;border:none;color:#fff;font-size:18px;line-height:1;cursor:pointer;opacity:.85;padding:2px 4px;flex-shrink:0;}
+.update-banner .ub-close:hover{opacity:1;}
+
 </style>
 </head>
 <body>
+<div id="update-banner" class="update-banner" style="display:none" role="alert">
+  <span class="ub-icon">🆕</span>
+  <div class="ub-text">
+    <div class="ub-title">发现新版本</div>
+    <div class="ub-note" id="ub-note"></div>
+  </div>
+  <button class="ub-btn" onclick="location.reload(true)">立即刷新</button>
+  <button class="ub-close" onclick="dismissUpdate()" title="本次忽略">✕</button>
+</div>
 <header>
   <h1>📚 课时追踪器</h1>
   <p>正常→请假→假期→调课→补课 · 支持多课程 / 多课时包 / 按年滚动</p>
@@ -626,7 +645,31 @@ function cmpRecords(a,b){
 // localStorage（固定key，永不更改）
 // ============================================================
 const STORAGE_KEY = 'course_tracker_final';
+const APP_VERSION = '2026-07-29T12:23:57Z'; // 部署版本号（每次部署由 deploy 脚本更新，配合 version.json 检测新版本）
 let _dirty=false; // 是否有未备份的改动（用于"未备份提醒"）
+
+// —— 新版本提示：仅在使用 GitHub Pages 在线版时检测；本地 file:// 打开不检测 ——
+function checkUpdate(){
+  try{
+    if(location.protocol==='file:') return;                 // 本地双击打开（file://）无服务器，跳过版本检测
+    fetch('version.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
+      if(!d||!d.version) return;
+      if(d.version===APP_VERSION) return;                    // 已是最新
+      try{ if(sessionStorage.getItem('ub_ignore')===d.version) return; }catch(e){} // 本次已忽略该版本
+      showUpdateBanner(d.version, d.note||'');
+    }).catch(()=>{});
+  }catch(e){}
+}
+function showUpdateBanner(v, note){
+  const b=document.getElementById('update-banner'); if(!b) return;
+  b.dataset.v=v;
+  const n=document.getElementById('ub-note'); if(n) n.textContent=note||'';
+  b.style.display='flex';
+}
+function dismissUpdate(){
+  const b=document.getElementById('update-banner');
+  if(b){ b.style.display='none'; try{ sessionStorage.setItem('ub_ignore', b.dataset.v||''); }catch(e){} }
+}
 function markDirty(){ _dirty=true; try{ document.body.classList.add('dirty'); }catch(e){} }
 function clearDirty(){ _dirty=false; try{ document.body.classList.remove('dirty'); }catch(e){} }
 function loadData(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); }catch(e){} return null; }
@@ -1906,6 +1949,8 @@ function importData(input){
     loadSyncCfg();     // 从本机 localStorage 载入同步配置（含令牌）
     _dirty=false;      // 初始载入不算"未同步改动"，首次同步按"采用/建立远端"处理
     startSyncPoll();   // 启动家庭共享同步（无令牌时自动进入只读实时查看）
+    checkUpdate();     // 检测是否有新版本部署（在线版才生效）
+    setInterval(checkUpdate, 5*60*1000); // 每 5 分钟复查，部署更新时即使开着页面也能提示
     if(data.locked){
       document.body.classList.add('locked');
       const btn=document.getElementById('lock-btn');
