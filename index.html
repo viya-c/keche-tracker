@@ -689,23 +689,19 @@ function setSyncStatus(s){
 function fmtSyncTime(ts){ if(!ts) return ''; const d=new Date(ts), p=n=>String(n).padStart(2,'0'); return p(d.getHours())+':'+p(d.getMinutes()); }
 async function pushLocal(){
   if(!SYNC.token){ setSyncStatus('readonly'); return; }
-  let sha=_syncSha;
-  if(!sha){ const cur=await ghGet(); sha=cur?cur.sha:null; _syncSha=sha; if(!cur){ _syncSha=await ghPut(appData,null); return; } }
-  _syncSha=await ghPut(appData, sha);
+  try{
+    _syncSha=await ghPut(appData,_syncSha);
+    _dirty=false; setSyncStatus('ok'); _syncLast=Date.now();
+  }catch(e){
+    if(e&&e.conflict){ try{ const cur=await ghGet(); _syncSha=cur?cur.sha:null; _syncSha=await ghPut(appData,_syncSha); _dirty=false; setSyncStatus('ok'); _syncLast=Date.now(); }catch(e2){ setSyncStatus('error'); } }
+    else setSyncStatus('error');
+  }
 }
 function syncSave(){
-  if(!SYNC.enabled) return;
-  if(!SYNC.token){ setSyncStatus('readonly'); return; }
+  _dirty=true;               // 任何本地保存都标记"有未同步改动"，防止被轮询覆盖
+  if(!SYNC.enabled || !SYNC.token) return;
   if(_syncSaveTimer) clearTimeout(_syncSaveTimer);
-  _syncSaveTimer=setTimeout(async ()=>{
-    if(_syncBusy) return; _syncBusy=true; setSyncStatus('syncing');
-    try{ await pushLocal(); if(SYNC.token){ setSyncStatus('ok'); _syncLast=Date.now(); } }
-    catch(e){
-      if(e&&e.conflict){ try{ const cur=await ghGet(); _syncSha=cur?cur.sha:null; _syncSha=await ghPut(appData,_syncSha); setSyncStatus('ok'); _syncLast=Date.now(); }
-        catch(e2){ setSyncStatus('error'); } }
-      else setSyncStatus('error');
-    } finally{ _syncBusy=false; }
-  }, 400);
+  _syncSaveTimer=setTimeout(()=>syncOnce(), 400);
 }
 async function applyRemote(){
   const cur=await ghGet();
@@ -716,29 +712,38 @@ async function applyRemote(){
   _suppressSync=true; appData=rd; saveData(appData); render(appData); _suppressSync=false;
   setSyncStatus(SYNC.token ? 'ok' : 'readonly'); if(SYNC.token) _syncLast=Date.now(); return true;
 }
-async function syncLoad(){
-  if(!SYNC.enabled) return;
-  setSyncStatus('syncing');
-  try{ if(!(await applyRemote())){ if(SYNC.token){ _syncSha=await ghPut(appData,null); setSyncStatus('ok'); _syncLast=Date.now(); } else setSyncStatus('readonly'); } }
-  catch(e){ setSyncStatus(SYNC.token ? 'offline' : 'readonly'); }
+// 统一同步一步：比较远端 sha，按"本地有未同步改动则推送(本地优先)、否则采用远端"处理，
+// 从而避免轮询把用户刚做的修改用旧远端数据覆盖掉。
+async function syncOnce(){
+  if(!SYNC.enabled || _syncBusy) return;
+  _syncBusy=true;
+  try{
+    if(!SYNC.token){ // 只读：无法推送；本地有改动时保留本地，绝不用远端覆盖
+      const cur=await ghGet();
+      if(!cur){ setSyncStatus('readonly'); return; }
+      if(_dirty){ setSyncStatus('readonly'); return; }
+      if(cur.sha!==_syncSha) await applyRemote(); else setSyncStatus('readonly');
+      return;
+    }
+    setSyncStatus('syncing');
+    const cur=await ghGet();
+    if(!cur){ await pushLocal(); return; }                 // 远端尚未创建 → 用本地数据建立
+    const remoteSha=cur.sha;
+    if(remoteSha===_syncSha){ if(_dirty) await pushLocal(); else { setSyncStatus('ok'); _syncLast=Date.now(); } return; }
+    if(_dirty) await pushLocal();                          // 本地有改动 → 本地优先推送（冲突自动重试）
+    else await applyRemote();                              // 本地无改动 → 采用远端
+  }catch(e){ setSyncStatus('error'); }
+  finally{ _syncBusy=false; }
 }
+async function syncLoad(){ await syncOnce(); }
 function startSyncPoll(){
   if(!SYNC.enabled) return;
-  syncLoad();
+  syncOnce();
   if(_syncTimer) clearInterval(_syncTimer);
   const iv = SYNC.token ? SYNC.interval : 70000; // 无令牌时降频，规避未认证限流(60/h)
-  _syncTimer=setInterval(async ()=>{
-    if(_syncBusy) return;
-    try{
-      const b=await ghBranch();
-      const r=await fetch(`https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.path}?ref=${b}`,{headers:ghHeaders()});
-      if(r.status===404) return; if(!r.ok) return;
-      const j=await r.json();
-      if(j.sha!==_syncSha){ await applyRemote(); }
-    }catch(e){ /* 轮询容错：忽略瞬时错误 */ }
-  }, iv);
+  _syncTimer=setInterval(()=>syncOnce(), iv);
 }
-function forceSync(){ syncLoad(); }
+function forceSync(){ syncOnce(); }
 
 // —— 同步设置（令牌存于本机 localStorage，不写进文件）——
 function loadSyncCfg(){
@@ -1899,6 +1904,7 @@ function importData(input){
     render(data);
     switchMainView('upcoming');
     loadSyncCfg();     // 从本机 localStorage 载入同步配置（含令牌）
+    _dirty=false;      // 初始载入不算"未同步改动"，首次同步按"采用/建立远端"处理
     startSyncPoll();   // 启动家庭共享同步（无令牌时自动进入只读实时查看）
     if(data.locked){
       document.body.classList.add('locked');
