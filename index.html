@@ -99,6 +99,10 @@ header p{font-size:13px;opacity:0.85;margin-top:4px;}
 /* 课程列表 */
 .lesson-list{display:flex;flex-direction:column;gap:6px;}
 .lesson-item{background:var(--card);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 6px rgba(0,0,0,0.05);transition:box-shadow 0.2s;flex-wrap:wrap;}
+/* 历史中“已排课但未打卡”的课次：浅色显示，与已登记课次区分 */
+.lesson-item.planned{opacity:.55;background:#FAFBFD;}
+.lesson-item.planned .lesson-num{filter:grayscale(.4);}
+.lesson-item.planned .status-btn{border-style:dashed;}
 .lesson-item:hover{box-shadow:0 3px 12px rgba(0,0,0,0.10);}
 .lesson-item.pair-parent{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:-6px;}
 .lesson-item.extra-row{border-left:3px solid #1EAAE7;background:#F8FBFF;border-top-left-radius:0;border-top-right-radius:0;margin-top:-2px;}
@@ -645,7 +649,7 @@ function cmpRecords(a,b){
 // localStorage（固定key，永不更改）
 // ============================================================
 const STORAGE_KEY = 'course_tracker_final';
-const APP_VERSION = '2026-07-29T17:08:24Z'; // 部署版本号（每次部署由 deploy 脚本更新，配合 version.json 检测新版本）
+const APP_VERSION = '2026-07-30T01:06:42Z'; // 部署版本号（每次部署由 deploy 脚本更新，配合 version.json 检测新版本）
 let _dirty=false; // 是否有未备份的改动（用于"未备份提醒"）
 
 // —— 新版本提示：仅在使用 GitHub Pages 在线版时检测；本地 file:// 打开不检测 ——
@@ -1347,12 +1351,6 @@ function renderTab(courseId, data, el){
       if(!(exp && exp(record.extraDate))) allItems.push({type:'extra',idx,record});
     }
   });
-  // 历史视图：尚未上课且未登记的课次（待记录/待上课）不显示，仅展示已登记的记录
-  allItems = allItems.filter(it=>{
-    if(it.type==='extra') return true;
-    const act=getActualStatus(it.record);
-    return act!=='unrecorded' && act!=='pending';
-  });
   let months=[], curMonth='', curGroup=[];
   allItems.forEach(item=>{
     const mo=monthLabel(parseDate(item.type==='lesson'?item.record.date:item.record.extraDate));
@@ -1447,6 +1445,7 @@ function renderRecordItem(courseId, meta, pkgs, item, dn, tStr){
   }
   const rec=item.record, isParent=!!rec.isParentClass;
   const actualStatus=getActualStatus(rec);
+  const planned = (actualStatus==='unrecorded'||actualStatus==='pending'); // 已排课但未打卡 → 历史中浅色显示
   const {text,cls}=getStatusLabel(actualStatus,isParent);
   const isToday=rec.date===tStr, d=parseDate(rec.date);
   const hasPair=!!rec.extraDate && (rec.status==='absent'||rec.status==='reschedule'||rec.status==='makeup');
@@ -1458,7 +1457,7 @@ function renderRecordItem(courseId, meta, pkgs, item, dn, tStr){
     const lbl=rec.status==='absent'?'补课':'调课新时间';
     actionBtn=`<button class="edit-btn" onclick="addExtra('${courseId}',${item.idx})">➕${lbl}</button>`;
   }
-  return `<div class="lesson-item ${isToday?'today':''} ${hasPair?'pair-parent':''}" id="lesson-${courseId}-${item.idx}"><div class="lesson-num" style="background:${meta.color}">${dn}</div><div class="lesson-info"><div class="lesson-date">${rec.date} 周${weekdayName(d)}${isToday?'<span style="color:#E65100;font-size:11px;margin-left:4px;font-weight:700;">今天</span>':''}${isParent?'<span class="lesson-tag tag-parent">亲子课</span>':''}${rec.manual?'<span class="lesson-tag tag-manual">📌手动</span>':''}${extraTags}</div><div class="lesson-time">${rec.time||''}</div></div><input class="note-input" placeholder="备注" value="${rec.note||''}" onchange="updateNote('${courseId}',${item.idx},this.value)" onfocus="this.placeholder=''" onblur="this.placeholder='备注'"/>${actionBtn}<button class="status-btn ${cls}" ${actualStatus==='pending'?'disabled style="cursor:default;opacity:0.6;"':''} onclick="toggleStatus('${courseId}',${item.idx})">${text}</button><button class="del-btn" onclick="deleteRecord('${courseId}',${item.idx})">✕</button></div>`;
+  return `<div class="lesson-item ${isToday?'today':''} ${hasPair?'pair-parent':''} ${planned?'planned':''}" id="lesson-${courseId}-${item.idx}"><div class="lesson-num" style="background:${meta.color}">${dn}</div><div class="lesson-info"><div class="lesson-date">${rec.date} 周${weekdayName(d)}${isToday?'<span style="color:#E65100;font-size:11px;margin-left:4px;font-weight:700;">今天</span>':''}${isParent?'<span class="lesson-tag tag-parent">亲子课</span>':''}${rec.manual?'<span class="lesson-tag tag-manual">📌手动</span>':''}${extraTags}</div><div class="lesson-time">${rec.time||''}</div></div><input class="note-input" placeholder="备注" value="${rec.note||''}" onchange="updateNote('${courseId}',${item.idx},this.value)" onfocus="this.placeholder=''" onblur="this.placeholder='备注'"/>${actionBtn}<button class="status-btn ${cls}" ${actualStatus==='pending'?'disabled style="cursor:default;opacity:0.6;"':''} onclick="toggleStatus('${courseId}',${item.idx})">${text}</button><button class="del-btn" onclick="deleteRecord('${courseId}',${item.idx})">✕</button></div>`;
 }
 
 function render(data){
